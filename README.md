@@ -38,8 +38,8 @@ A comprehensive Point of Sale (POS) and inventory management system built with L
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/possales-management-system.git
-cd possales-management-system
+git clone https://github.com/Hssazzad/Possales-Managment-sytem.git
+cd Possales-Managment-sytem
 ```
 
 2. **Install dependencies**
