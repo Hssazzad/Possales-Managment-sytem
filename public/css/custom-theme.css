@@ -1,0 +1,80 @@
+.main-sidebar {
+    background-color: #c0392b !important;
+}
+
+.brand-link {
+    background-color: #a93226 !important;
+    border-bottom: 1px solid #7b241c !important;
+}
+.brand-link:hover {
+    background-color: #7b241c !important;
+}
+.brand-link .brand-text {
+    color: #ffffff !important;
+}
+
+.nav-sidebar .nav-item .nav-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+.nav-sidebar .nav-item .nav-link .nav-icon {
+    color: rgba(255, 255, 255, 0.70) !important;
+}
+.nav-sidebar .nav-item .nav-link:hover {
+    background-color: rgba(0, 0, 0, 0.25) !important;
+    color: #ffffff !important;
+}
+.nav-sidebar .nav-item .nav-link:hover .nav-icon {
+    color: #ffffff !important;
+}
+.nav-sidebar .nav-item .nav-link.active {
+    background-color: #7b241c !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+}
+.nav-sidebar .nav-item .nav-link.active .nav-icon {
+    color: #ffffff !important;
+}
+
+.nav-treeview {
+    background-color: rgba(0, 0, 0, 0.15) !important;
+}
+.nav-treeview .nav-item .nav-link {
+    color: rgba(255, 255, 255, 0.80) !important;
+}
+.nav-treeview .nav-item .nav-link:hover {
+    background-color: rgba(0, 0, 0, 0.20) !important;
+    color: #ffffff !important;
+}
+.nav-treeview .nav-item .nav-link.active {
+    background-color: #7b241c !important;
+    color: #ffffff !important;
+}
+
+.main-header.navbar {
+    background-color: #c0392b !important;
+    border-bottom: 1px solid #a93226 !important;
+}
+.main-header.navbar .nav-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+.main-header.navbar .nav-link:hover {
+    color: #ffffff !important;
+}
+
+.sidebar .form-control {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    color: #ffffff !important;
+}
+.sidebar .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.55) !important;
+}
+.sidebar .input-group-text {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    color: #ffffff !important;
+}
+
+.os-theme-light > .os-scrollbar > .os-scrollbar-track > .os-scrollbar-handle {
+    background: rgba(255, 255, 255, 0.30) !important;
+}

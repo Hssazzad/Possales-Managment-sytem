@@ -1,0 +1,77 @@
+/* ===== Sidebar Background ===== */
+.main-sidebar,
+.main-sidebar .sidebar,
+body.sidebar-mini .main-sidebar {
+    background-color: #c53030 !important;
+}
+
+/* ===== Sidebar Menu Links ===== */
+.main-sidebar .nav-sidebar .nav-item .nav-link,
+.main-sidebar .nav-sidebar .nav-item a {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* ===== Sidebar Active Item ===== */
+.main-sidebar .nav-sidebar .nav-item .nav-link.active,
+.main-sidebar .nav-sidebar .nav-item .nav-link:hover,
+.sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active,
+.sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link:hover {
+    background-color: rgba(0, 0, 0, 0.25) !important;
+    color: #ffffff !important;
+}
+
+/* ===== Submenu Items ===== */
+.main-sidebar .nav-treeview .nav-item .nav-link,
+.main-sidebar .nav-treeview .nav-item a {
+    color: rgba(255, 255, 255, 0.75) !important;
+}
+.main-sidebar .nav-treeview .nav-item .nav-link:hover,
+.main-sidebar .nav-treeview .nav-item .nav-link.active {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+    color: #ffffff !important;
+}
+
+/* ===== Sidebar Icons ===== */
+.main-sidebar .nav-sidebar .nav-item .nav-link .nav-icon {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* ===== Sidebar Search Box ===== */
+.sidebar-form .form-control,
+.sidebar .form-inline .form-control {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+}
+
+/* ===== Brand/Logo Area ===== */
+.brand-link,
+.main-sidebar .brand-link {
+    background-color: #9b2c2c !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2) !important;
+}
+.brand-text,
+.brand-link .brand-text {
+    color: #ffffff !important;
+}
+
+/* ===== Top Navbar ===== */
+.main-header.navbar {
+    background-color: #c53030 !important;
+    border-bottom: 2px solid #9b2c2c !important;
+}
+.main-header .nav-link,
+.main-header .navbar-nav .nav-link,
+.main-header button {
+    color: #ffffff !important;
+}
+.main-header .form-control-navbar {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+}
+.main-header .input-group-navbar .btn {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+}
