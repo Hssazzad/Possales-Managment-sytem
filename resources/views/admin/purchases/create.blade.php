@@ -280,7 +280,6 @@ $(document).ready(function() {
     document.getElementById('tax_amount').addEventListener('input', calculateTotals);
     document.getElementById('discount_amount').addEventListener('input', calculateTotals);
 
-    calculateTotals();
 });
 </script>
 @stop
