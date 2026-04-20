@@ -1,0 +1,184 @@
+.gov-page-header {
+    margin-bottom: 1rem;
+    gap: 1rem;
+}
+
+.gov-page-title {
+    margin: 0;
+    color: #0b0c0c;
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.gov-page-subtitle {
+    margin-top: 0.5rem;
+    color: #505a5f;
+    font-size: 1rem;
+}
+
+.gov-card {
+    border: 1px solid #b1b4b6;
+    border-radius: 0;
+    box-shadow: none;
+    background-color: #ffffff;
+}
+
+.gov-card-header {
+    background-color: #f3f2f1;
+    border-bottom: 1px solid #b1b4b6;
+    padding: 1rem 1.25rem;
+}
+
+.gov-card-body {
+    padding: 1.25rem;
+}
+
+.gov-section-title {
+    color: #0b0c0c;
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+.gov-form-section {
+    border: 1px solid #d8d8d8;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.gov-form-legend {
+    width: auto;
+    margin-bottom: 0.75rem;
+    padding: 0 0.25rem;
+    color: #1d70b8;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.gov-label {
+    color: #0b0c0c;
+    font-weight: 700;
+}
+
+.gov-input {
+    border: 2px solid #505a5f;
+    border-radius: 0;
+    color: #0b0c0c;
+    min-height: 42px;
+}
+
+.gov-input:focus {
+    border-color: #1d70b8;
+    box-shadow: 0 0 0 3px #ffdd00;
+}
+
+.gov-input-readonly,
+.gov-input[readonly] {
+    background-color: #f3f2f1;
+    color: #505a5f;
+}
+
+.gov-validation-message {
+    display: block;
+    margin-top: 0.35rem;
+    min-height: 1rem;
+    color: #d4351c;
+    font-size: 0.875rem;
+}
+
+.gov-alert {
+    border-left: 6px solid #d4351c;
+    border-radius: 0;
+}
+
+.gov-alert-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.gov-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.gov-btn {
+    border-radius: 0;
+    border: 2px solid transparent;
+    font-weight: 700;
+    min-height: 42px;
+    padding: 0.45rem 1rem;
+}
+
+.gov-btn:focus,
+.gov-btn:focus-visible {
+    outline: 3px solid #ffdd00;
+    outline-offset: 1px;
+    box-shadow: none;
+}
+
+.gov-btn-primary {
+    background-color: #1d70b8;
+    border-color: #1d70b8;
+    color: #ffffff;
+}
+
+.gov-btn-primary:hover,
+.gov-btn-primary:active {
+    background-color: #003078;
+    border-color: #003078;
+    color: #ffffff;
+}
+
+.gov-btn-secondary {
+    background-color: #f3f2f1;
+    border-color: #505a5f;
+    color: #0b0c0c;
+}
+
+.gov-btn-secondary:hover,
+.gov-btn-secondary:active {
+    background-color: #dbdad9;
+    border-color: #0b0c0c;
+    color: #0b0c0c;
+}
+
+.gov-note-panel,
+.gov-warning-panel {
+    border: 1px solid #b1b4b6;
+    border-left-width: 5px;
+    padding: 0.85rem;
+    background-color: #f8f8f8;
+}
+
+.gov-note-panel {
+    border-left-color: #1d70b8;
+}
+
+.gov-warning-panel {
+    border-left-color: #505a5f;
+}
+
+.gov-note-title {
+    margin: 0 0 0.5rem;
+    color: #0b0c0c;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+@media (max-width: 767.98px) {
+    .gov-page-title {
+        font-size: 1.5rem;
+    }
+
+    .gov-card-body,
+    .gov-card-header {
+        padding: 1rem;
+    }
+
+    .gov-form-section {
+        padding: 0.85rem;
+    }
+}
