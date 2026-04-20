@@ -245,8 +245,15 @@ $(document).ready(function() {
             feedback.dataset.serverError = 'true';
         }
 
-        field.addEventListener('input', () => setValidationFeedback(field));
-        field.addEventListener('change', () => setValidationFeedback(field));
+        const handleFieldInteraction = () => {
+            if (feedback && feedback.dataset.serverError) {
+                delete feedback.dataset.serverError;
+            }
+            setValidationFeedback(field);
+        };
+
+        field.addEventListener('input', handleFieldInteraction);
+        field.addEventListener('change', handleFieldInteraction);
     });
 
     form.addEventListener('submit', function(event) {
