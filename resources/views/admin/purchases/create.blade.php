@@ -49,7 +49,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="supplier_id" class="gov-label">Supplier <span aria-hidden="true">*</span></label>
-                                    <select class="form-control gov-input @error('supplier_id') is-invalid @enderror" id="supplier_id" name="supplier_id" required aria-describedby="supplier_id_feedback">
+                                    <select class="form-control gov-input @error('supplier_id') is-invalid @enderror" id="supplier_id" name="supplier_id" required aria-required="true" aria-describedby="supplier_id_feedback">
                                         <option value="">Select supplier</option>
                                     </select>
                                     <small id="supplier_id_feedback" class="gov-validation-message" aria-live="polite">@error('supplier_id'){{ $message }}@enderror</small>
@@ -58,7 +58,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="purchase_date" class="gov-label">Purchase date <span aria-hidden="true">*</span></label>
-                                    <input type="date" class="form-control gov-input @error('purchase_date') is-invalid @enderror" id="purchase_date" name="purchase_date" value="{{ old('purchase_date', date('Y-m-d')) }}" required aria-describedby="purchase_date_feedback">
+                                    <input type="date" class="form-control gov-input @error('purchase_date') is-invalid @enderror" id="purchase_date" name="purchase_date" value="{{ old('purchase_date', date('Y-m-d')) }}" required aria-required="true" aria-describedby="purchase_date_feedback">
                                     <small id="purchase_date_feedback" class="gov-validation-message" aria-live="polite">@error('purchase_date'){{ $message }}@enderror</small>
                                 </div>
                             </div>
@@ -75,7 +75,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="payment_method" class="gov-label">Payment method <span aria-hidden="true">*</span></label>
-                                    <select class="form-control gov-input @error('payment_method') is-invalid @enderror" id="payment_method" name="payment_method" required aria-describedby="payment_method_feedback">
+                                    <select class="form-control gov-input @error('payment_method') is-invalid @enderror" id="payment_method" name="payment_method" required aria-required="true" aria-describedby="payment_method_feedback">
                                         <option value="cash" {{ old('payment_method', 'cash') === 'cash' ? 'selected' : '' }}>Cash</option>
                                         <option value="card" {{ old('payment_method') === 'card' ? 'selected' : '' }}>Card</option>
                                         <option value="bank" {{ old('payment_method') === 'bank' ? 'selected' : '' }}>Bank Transfer</option>
@@ -93,7 +93,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="subtotal" class="gov-label">Subtotal <span aria-hidden="true">*</span></label>
-                                    <input type="number" class="form-control gov-input @error('subtotal') is-invalid @enderror" id="subtotal" name="subtotal" step="0.01" min="0" value="{{ old('subtotal') }}" required aria-describedby="subtotal_feedback">
+                                    <input type="number" class="form-control gov-input @error('subtotal') is-invalid @enderror" id="subtotal" name="subtotal" step="0.01" min="0" value="{{ old('subtotal') }}" required aria-required="true" aria-describedby="subtotal_feedback">
                                     <small id="subtotal_feedback" class="gov-validation-message" aria-live="polite">@error('subtotal'){{ $message }}@enderror</small>
                                 </div>
                             </div>
@@ -117,7 +117,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="total_amount" class="gov-label">Total amount <span aria-hidden="true">*</span></label>
-                                    <input type="number" class="form-control gov-input gov-input-readonly @error('total_amount') is-invalid @enderror" id="total_amount" name="total_amount" step="0.01" min="0" value="{{ old('total_amount', 0) }}" readonly required aria-describedby="total_amount_feedback">
+                                    <input type="number" class="form-control gov-input gov-input-readonly @error('total_amount') is-invalid @enderror" id="total_amount" name="total_amount" step="0.01" min="0" value="{{ old('total_amount', 0) }}" readonly required aria-required="true" aria-describedby="total_amount_feedback">
                                     <small id="total_amount_feedback" class="gov-validation-message" aria-live="polite">@error('total_amount'){{ $message }}@enderror</small>
                                 </div>
                             </div>
@@ -127,7 +127,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="paid_amount" class="gov-label">Paid amount <span aria-hidden="true">*</span></label>
-                                    <input type="number" class="form-control gov-input @error('paid_amount') is-invalid @enderror" id="paid_amount" name="paid_amount" step="0.01" min="0" value="{{ old('paid_amount', 0) }}" required aria-describedby="paid_amount_feedback">
+                                    <input type="number" class="form-control gov-input @error('paid_amount') is-invalid @enderror" id="paid_amount" name="paid_amount" step="0.01" min="0" value="{{ old('paid_amount', 0) }}" required aria-required="true" aria-describedby="paid_amount_feedback">
                                     <small id="paid_amount_feedback" class="gov-validation-message" aria-live="polite">@error('paid_amount'){{ $message }}@enderror</small>
                                 </div>
                             </div>
@@ -241,7 +241,7 @@ $(document).ready(function() {
     trackedFields.forEach(field => {
         const feedback = document.getElementById(`${field.id}_feedback`);
 
-        if (feedback && feedback.textContent.trim() !== '') {
+        if (feedback && field.classList.contains('is-invalid')) {
             feedback.dataset.serverError = 'true';
         }
 
@@ -251,16 +251,21 @@ $(document).ready(function() {
 
     form.addEventListener('submit', function(event) {
         let hasInvalidField = false;
+        let firstInvalidField = null;
 
         trackedFields.forEach(field => {
             setValidationFeedback(field);
             if (!field.validity.valid) {
                 hasInvalidField = true;
+                firstInvalidField = firstInvalidField || field;
             }
         });
 
         if (hasInvalidField) {
             event.preventDefault();
+            if (firstInvalidField) {
+                firstInvalidField.focus();
+            }
         }
     });
 
