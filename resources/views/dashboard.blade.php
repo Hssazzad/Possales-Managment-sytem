@@ -19,59 +19,59 @@
 <div class="row mt-2">
 
     <div class="col-lg-3 col-sm-6 col-12 mb-3">
-        <div class="card h-100" style="border:none; border-top:3px solid #007bff; border-radius:10px; box-shadow:0 2px 12px rgba(0,123,255,0.08);">
+        <div class="card h-100 shadow-sm border-0" style="border-radius:8px;">
             <div class="card-body d-flex align-items-center justify-content-between py-3">
                 <div>
-                    <p class="mb-1 font-weight-bold text-uppercase" style="font-size:0.7rem; letter-spacing:1.2px; color:#adb5bd;">Today Sales</p>
-                    <h3 class="font-weight-bold mb-1" style="color:#212529; font-size:1.6rem;">৳0.00</h3>
-                    <small style="color:#28a745; font-size:0.75rem;"><i class="fas fa-arrow-up mr-1"></i>0% from yesterday</small>
+                    <p class="mb-1 font-weight-bold text-uppercase" style="font-size:0.7rem; letter-spacing:1.2px; color:#64748b;">Today Sales</p>
+                    <h3 class="font-weight-bold mb-1" style="color:#0f172a; font-size:1.6rem;">৳0.00</h3>
+                    <small style="color:#16a34a; font-size:0.75rem;"><i class="fas fa-arrow-up mr-1"></i>0% from yesterday</small>
                 </div>
-                <div style="background:linear-gradient(135deg,#e8f0fe,#c2d4ff); border-radius:50%; width:54px; height:54px; display:flex; align-items:center; justify-content:center;">
-                    <i class="fas fa-shopping-bag" style="color:#007bff; font-size:1.4rem;"></i>
+                <div style="background:#f1f5f9; border-radius:12px; width:54px; height:54px; display:flex; align-items:center; justify-content:center;">
+                    <i class="fas fa-shopping-bag" style="color:#003366; font-size:1.4rem;"></i>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="col-lg-3 col-sm-6 col-12 mb-3">
-        <div class="card h-100" style="border:none; border-top:3px solid #28a745; border-radius:10px; box-shadow:0 2px 12px rgba(40,167,69,0.08);">
+        <div class="card h-100 shadow-sm border-0" style="border-radius:8px;">
             <div class="card-body d-flex align-items-center justify-content-between py-3">
                 <div>
-                    <p class="mb-1 font-weight-bold text-uppercase" style="font-size:0.7rem; letter-spacing:1.2px; color:#adb5bd;">Total Sales</p>
-                    <h3 class="font-weight-bold mb-1" style="color:#212529; font-size:1.6rem;">৳0.00</h3>
-                    <small style="color:#28a745; font-size:0.75rem;"><i class="fas fa-arrow-up mr-1"></i>0% this month</small>
+                    <p class="mb-1 font-weight-bold text-uppercase" style="font-size:0.7rem; letter-spacing:1.2px; color:#64748b;">Total Sales</p>
+                    <h3 class="font-weight-bold mb-1" style="color:#0f172a; font-size:1.6rem;">৳0.00</h3>
+                    <small style="color:#16a34a; font-size:0.75rem;"><i class="fas fa-arrow-up mr-1"></i>0% this month</small>
                 </div>
-                <div style="background:linear-gradient(135deg,#e6f4ea,#b7dfbf); border-radius:50%; width:54px; height:54px; display:flex; align-items:center; justify-content:center;">
-                    <i class="fas fa-chart-line" style="color:#28a745; font-size:1.4rem;"></i>
+                <div style="background:#f1f5f9; border-radius:12px; width:54px; height:54px; display:flex; align-items:center; justify-content:center;">
+                    <i class="fas fa-chart-line" style="color:#16a34a; font-size:1.4rem;"></i>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="col-lg-3 col-sm-6 col-12 mb-3">
-        <div class="card h-100" style="border:none; border-top:3px solid #17a2b8; border-radius:10px; box-shadow:0 2px 12px rgba(23,162,184,0.08);">
+        <div class="card h-100 shadow-sm border-0" style="border-radius:8px;">
             <div class="card-body d-flex align-items-center justify-content-between py-3">
                 <div>
-                    <p class="mb-1 font-weight-bold text-uppercase" style="font-size:0.7rem; letter-spacing:1.2px; color:#adb5bd;">Total Income</p>
-                    <h3 class="font-weight-bold mb-1" style="color:#212529; font-size:1.6rem;">৳0.00</h3>
-                    <small style="color:#17a2b8; font-size:0.75rem;"><i class="fas fa-minus mr-1"></i>0% this month</small>
+                    <p class="mb-1 font-weight-bold text-uppercase" style="font-size:0.7rem; letter-spacing:1.2px; color:#64748b;">Total Income</p>
+                    <h3 class="font-weight-bold mb-1" style="color:#0f172a; font-size:1.6rem;">৳0.00</h3>
+                    <small style="color:#003366; font-size:0.75rem;"><i class="fas fa-minus mr-1"></i>0% this month</small>
                 </div>
-                <div style="background:linear-gradient(135deg,#e0f7fa,#b2ebf2); border-radius:50%; width:54px; height:54px; display:flex; align-items:center; justify-content:center;">
-                    <i class="fas fa-wallet" style="color:#17a2b8; font-size:1.4rem;"></i>
+                <div style="background:#f1f5f9; border-radius:12px; width:54px; height:54px; display:flex; align-items:center; justify-content:center;">
+                    <i class="fas fa-wallet" style="color:#003366; font-size:1.4rem;"></i>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="col-lg-3 col-sm-6 col-12 mb-3">
-        <div class="card h-100" style="border:none; border-top:3px solid #dc3545; border-radius:10px; box-shadow:0 2px 12px rgba(220,53,69,0.08);">
+        <div class="card h-100 shadow-sm border-0" style="border-radius:8px;">
             <div class="card-body d-flex align-items-center justify-content-between py-3">
                 <div>
-                    <p class="mb-1 font-weight-bold text-uppercase" style="font-size:0.7rem; letter-spacing:1.2px; color:#adb5bd;">Total Expense</p>
-                    <h3 class="font-weight-bold mb-1" style="color:#212529; font-size:1.6rem;">৳0.00</h3>
+                    <p class="mb-1 font-weight-bold text-uppercase" style="font-size:0.7rem; letter-spacing:1.2px; color:#64748b;">Total Expense</p>
+                    <h3 class="font-weight-bold mb-1" style="color:#0f172a; font-size:1.6rem;">৳0.00</h3>
                     <small style="color:#dc3545; font-size:0.75rem;"><i class="fas fa-arrow-down mr-1"></i>0% this month</small>
                 </div>
-                <div style="background:linear-gradient(135deg,#fde8ea,#f5c6cb); border-radius:50%; width:54px; height:54px; display:flex; align-items:center; justify-content:center;">
+                <div style="background:#f1f5f9; border-radius:12px; width:54px; height:54px; display:flex; align-items:center; justify-content:center;">
                     <i class="fas fa-file-invoice-dollar" style="color:#dc3545; font-size:1.4rem;"></i>
                 </div>
             </div>
@@ -84,10 +84,10 @@
 <div class="row">
 
     <div class="col-md-8 mb-3">
-        <div class="card" style="border:none; border-radius:10px; box-shadow:0 2px 12px rgba(0,0,0,0.06);">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center" style="border-radius:10px 10px 0 0; border-bottom:1px solid #f0f0f0;">
-                <h6 class="m-0 font-weight-bold" style="color:#343a40; font-size:0.9rem;">
-                    <i class="fas fa-chart-area mr-2" style="color:#007bff;"></i>Profit & Loss Overview
+        <div class="card shadow-sm border-0" style="border-radius:8px;">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center" style="border-radius:8px 8px 0 0; border-bottom:1px solid #f1f5f9;">
+                <h6 class="m-0 font-weight-bold" style="color:#1e293b; font-size:0.9rem;">
+                    <i class="fas fa-chart-area mr-2" style="color:#003366;"></i>Profit & Loss Overview
                 </h6>
                 <select class="form-control form-control-sm" style="width:90px; border:1px solid #e9ecef; border-radius:6px; font-size:0.8rem;">
                     <option>2026</option>
@@ -101,10 +101,10 @@
     </div>
 
     <div class="col-md-4 mb-3">
-        <div class="card" style="border:none; border-radius:10px; box-shadow:0 2px 12px rgba(0,0,0,0.06);">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center" style="border-radius:10px 10px 0 0; border-bottom:1px solid #f0f0f0;">
-                <h6 class="m-0 font-weight-bold" style="color:#343a40; font-size:0.9rem;">
-                    <i class="fas fa-chart-pie mr-2" style="color:#007bff;"></i>Overall Reports
+        <div class="card shadow-sm border-0" style="border-radius:8px;">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center" style="border-radius:8px 8px 0 0; border-bottom:1px solid #f1f5f9;">
+                <h6 class="m-0 font-weight-bold" style="color:#1e293b; font-size:0.9rem;">
+                    <i class="fas fa-chart-pie mr-2" style="color:#003366;"></i>Overall Reports
                 </h6>
                 <select class="form-control form-control-sm" style="width:90px; border:1px solid #e9ecef; border-radius:6px; font-size:0.8rem;">
                     <option>2026</option>
@@ -142,8 +142,8 @@
 {{-- Recent Tables --}}
 <div class="row">
     <div class="col-12 mb-3">
-        <div class="card" style="border:none; border-radius:10px; box-shadow:0 2px 12px rgba(0,0,0,0.06);">
-            <div class="card-header bg-white p-0" style="border-radius:10px 10px 0 0; border-bottom:1px solid #f0f0f0;">
+        <div class="card shadow-sm border-0" style="border-radius:8px;">
+            <div class="card-header bg-white p-0" style="border-radius:8px 8px 0 0; border-bottom:1px solid #f1f5f9;">
                 <ul class="nav nav-tabs border-0" id="recentTab">
                     <li class="nav-item">
                         <a class="nav-link active px-4 py-3 font-weight-bold tab-active-link" data-toggle="tab" href="#recentSales" style="font-size:0.85rem; border:none; border-radius:0;">
@@ -291,12 +291,12 @@ new Chart(document.getElementById('profitLossChart').getContext('2d'), {
             {
                 label: 'Sales',
                 data: [0,0,0,0,0,0,0,0,0,0,0,0],
-                borderColor: '#007bff',
-                backgroundColor: 'rgba(0,123,255,0.07)',
+                borderColor: '#003366',
+                backgroundColor: 'rgba(0,51,102,0.07)',
                 borderWidth: 2.5,
                 tension: 0.4,
                 fill: true,
-                pointBackgroundColor: '#007bff',
+                pointBackgroundColor: '#003366',
                 pointRadius: 3,
                 pointHoverRadius: 6,
             }
@@ -331,7 +331,7 @@ new Chart(document.getElementById('overallChart').getContext('2d'), {
         labels: ['Purchase', 'Sales', 'Income', 'Expense'],
         datasets: [{
             data: [25, 35, 25, 15],
-            backgroundColor: ['#f39c12', '#007bff', '#28a745', '#dc3545'],
+            backgroundColor: ['#64748b', '#003366', '#16a34a', '#dc3545'],
             borderWidth: 0,
             hoverOffset: 8
         }]

@@ -65,14 +65,14 @@ return [
     'classes_auth_btn' => 'btn-flat btn-primary',
 
     'classes_body'             => 'sidebar-mini layout-fixed sidebar-dark-primary',
-    'classes_brand'            => 'bg-danger',
-    'classes_brand_text'       => 'text-white',
+    'classes_brand'            => 'bg-white border-bottom',
+    'classes_brand_text'       => 'text-dark font-weight-bold',
     'classes_content_wrapper'  => 'bg-light',
     'classes_content_header'   => '',
     'classes_content'          => '',
-    'classes_sidebar'          => 'sidebar-dark-primary elevation-4',
+    'classes_sidebar'          => 'sidebar-light-primary elevation-1',
     'classes_sidebar_nav'      => 'nav-child-indent',
-    'classes_topnav'           => 'navbar-dark',
+    'classes_topnav'           => 'navbar-white navbar-light border-bottom',
     'classes_topnav_nav'       => 'navbar-expand',
     'classes_topnav_container' => 'container-fluid',
 
