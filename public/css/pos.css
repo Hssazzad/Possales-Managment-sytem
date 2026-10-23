@@ -1,0 +1,858 @@
+/* POS Styles - Clean Modern Look */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body, .content-wrapper {
+    background: #ffffff !important;
+    color: #111827 !important;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.content-wrapper > .content {
+    padding: 0 !important;
+}
+
+.content-header {
+    display: none !important;
+}
+
+/* Layout */
+.pos-layout {
+    display: flex;
+    flex-direction: row-reverse;
+    height: calc(100vh - 57px);
+    overflow: hidden;
+    background: #f4f6f9 !important;
+}
+
+/* =========================================
+   Left Panel - Cart & Payment
+   ========================================= */
+.pos-left {
+    flex: 1 1 60%;
+    display: flex;
+    flex-direction: column;
+    background: #f4f6f9 !important;
+    padding: 15px;
+    min-height: 0; /* Prevent overflow */
+}
+
+/* Main Card Wrapper for Left Side */
+.left-card {
+    background: #ffffff !important;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* Topbar - Compact */
+.pos-topbar {
+    flex-shrink: 0;
+    padding: 10px 15px;
+    background: #ffffff !important;
+}
+
+.pos-topbar-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.pos-topbar-row:last-child {
+    margin-bottom: 0;
+}
+
+.tb-input {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: #ffffff !important;
+    color: #374151 !important;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.tb-input:focus { border-color: #20c997 !important; box-shadow: 0 0 0 2px rgba(32, 201, 151, 0.1); }
+
+.walking-customer-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: #e6fcf5 !important;
+    border: 1px solid #20c997;
+    border-radius: 6px;
+    color: #20c997 !important;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.walking-customer-badge:hover { background: #c3fae8 !important; }
+
+.btn-add-cust {
+    background: #20c997 !important;
+    color: #ffffff !important;
+    border: none;
+    border-radius: 6px;
+    width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+.btn-add-cust:hover { opacity: 0.9; }
+
+/* Cart Area - Optimized for Space */
+.cart-wrap {
+    flex: 1;
+    overflow-y: auto;
+    background: #ffffff !important;
+    padding: 0 15px;
+    min-height: 0;
+}
+
+.cart-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.cart-table thead th {
+    padding: 8px 6px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #6b7280 !important;
+    background: #ffffff !important;
+    border-bottom: 2px solid #f3f4f6;
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.cart-table tbody td {
+    padding: 6px 6px; /* Compact padding */
+    border-bottom: 1px solid #f3f4f6;
+    color: #374151 !important;
+    background: #ffffff !important;
+    vertical-align: middle;
+}
+
+.cart-table tbody td img {
+    width: 28px !important; /* Smaller images */
+    height: 28px !important;
+}
+
+.qty-wrap { display: flex; align-items: center; gap: 4px; }
+.qty-btn {
+    width: 24px; height: 24px;
+    border: 1px solid #e5e7eb;
+    background: #ffffff !important;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    color: #374151 !important;
+}
+.qty-btn:hover { background: #f3f4f6 !important; }
+.qty-num {
+    width: 36px;
+    text-align: center;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    padding: 2px 4px;
+    font-size: 12px;
+    font-weight: 700;
+    background: #ffffff !important;
+    color: #111827 !important;
+    outline: none;
+}
+.disc-num {
+    width: 48px;
+    text-align: center;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    padding: 2px 4px;
+    font-size: 11px;
+    background: #ffffff !important;
+    color: #111827 !important;
+    outline: none;
+}
+.remove-btn {
+    background: #ffffff !important;
+    border: none;
+    color: #9ca3af !important;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+.remove-btn:hover { color: #ef4444 !important; }
+.var-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    color: #6b7280 !important;
+    background: #f3f4f6 !important;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-top: 2px;
+}
+
+/* Cart Empty State */
+.cart-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: #9ca3af !important;
+}
+.cart-empty i { font-size: 40px; margin-bottom: 15px; opacity: 0.5; color: #cbd5e1; }
+.cart-empty p { font-size: 13px; font-weight: 500; }
+
+/* Payment Section - Compact */
+.pos-payment {
+    flex-shrink: 0;
+    padding: 12px 15px;
+    background: #ffffff !important;
+    border-top: 1px dashed #e5e7eb;
+}
+
+.pay-amounts-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.pay-col-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.pay-col-box label {
+    font-size: 9px;
+    color: #6b7280 !important;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.pay-col-box input {
+    font-size: 13px;
+    padding: 6px 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: #f9fafb !important;
+    color: #111827 !important;
+    font-weight: 600;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.pay-col-box input:focus { border-color: #20c997 !important; background: #ffffff !important; }
+
+.pay-bottom-grid {
+    display: flex;
+    gap: 20px;
+}
+
+.method-col {
+    flex: 1;
+}
+
+.method-col label {
+    font-size: 9px;
+    color: #6b7280 !important;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.method-sel {
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 13px;
+    background: #ffffff !important;
+    color: #374151 !important;
+    outline: none;
+}
+
+.totals-col {
+    flex: 1.2;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.tot-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #6b7280 !important;
+}
+
+.tot-row .tv {
+    font-weight: 600;
+    color: #111827 !important;
+}
+
+.tot-row.tot-main {
+    padding-top: 6px;
+    margin-top: 2px;
+    font-size: 14px;
+    font-weight: 800;
+    color: #111827 !important;
+}
+
+.tot-row.tot-main .tv { font-size: 16px; }
+
+.sm-sel {
+    font-size: 11px;
+    padding: 2px 4px;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    background: #ffffff !important;
+    color: #374151 !important;
+    margin-left: 6px;
+    outline: none;
+}
+
+.sm-inp {
+    font-size: 12px;
+    padding: 2px 6px;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    width: 50px;
+    text-align: right;
+    outline: none;
+}
+
+/* Buttons - Compact */
+.btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.pos-btn {
+    flex: 1;
+    padding: 8px 15px;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+}
+
+.btn-clear {
+    background: #ffffff !important;
+    color: #374151 !important;
+    border: 1px solid #e5e7eb;
+}
+.btn-clear:hover { background: #f3f4f6 !important; border-color: #d1d5db; }
+
+.btn-pay {
+    background: #20c997 !important;
+    color: #ffffff !important;
+    border: none;
+}
+.btn-pay:hover { background: #12b886 !important; }
+.btn-pay:disabled { opacity: 0.7; cursor: not-allowed; }
+
+/* =========================================
+   Right Panel - Redesigned List View
+   ========================================= */
+.pos-right {
+    flex: 1 1 40%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #ffffff !important;
+    border-right: 1px solid #e5e7eb;
+}
+
+.prod-header {
+    padding: 15px;
+    background: #ffffff !important;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.prod-header h3 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #000000 !important;
+}
+
+.search-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.search-input-group {
+    flex: 1;
+    display: flex;
+    position: relative;
+}
+
+.search-inp {
+    width: 100%;
+    padding: 8px 12px 8px 35px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 13px;
+    background: #ffffff !important;
+    color: #111827 !important;
+    outline: none;
+}
+
+.search-inp:focus {
+    border-color: #9ca3af !important;
+}
+
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-icon:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+/* Product List */
+.prod-list, .prod-grid {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff !important;
+}
+
+.prod-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    border-bottom: 1px solid #f3f4f6;
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-weight: 700;
+    transition: background-color 0.15s;
+    cursor: pointer;
+}
+
+.prod-list-item,
+.prod-list-item .prod-name,
+.prod-list-item .prod-price {
+    color: #000000 !important;
+    font-weight: 700 !important;
+    opacity: 1 !important;
+}
+
+.prod-list-item:hover {
+    background: #f9fafb !important;
+}
+
+.prod-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.prod-icon {
+    position: relative;
+}
+
+.prod-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.prod-details .name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #000000 !important;
+}
+
+.prod-details .meta {
+    font-size: 12px;
+    color: #000000 !important;
+    font-weight: 700;
+}
+
+.prod-details .price {
+    font-weight: 700;
+    color: #000000 !important;
+}
+
+/* Actions & Info Button */
+.prod-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-info-prod {
+    background: #f3f4f6 !important;
+    color: #4b5563 !important;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn-info-prod:hover {
+    background: #e5e7eb !important;
+    color: #111827 !important;
+}
+
+.btn-add {
+    background: #111827 !important;
+    color: #ffffff !important;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s;
+}
+
+.btn-add:hover {
+    background: #374151 !important;
+}
+
+.btn-add i {
+    font-size: 10px;
+    border-left: 1px solid rgba(255,255,255,0.2);
+    padding-left: 6px;
+    margin-left: 2px;
+}
+
+/* Product Out of Stock Overlay */
+.prod-list-item.out-of-stock {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+.prod-list-item.out-of-stock .prod-icon::after {
+    content: 'OUT';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 4px;
+    border-radius: 4px;
+    pointer-events: none;
+}
+
+/* Product Card Active State */
+.prod-list-item:active {
+    transform: scale(0.99);
+    transition: transform 0.1s ease;
+}
+
+/* =========================================
+   Modals, Toasts & Utilities
+   ========================================= */
+
+/* Variation & Details Modal */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+    background: #ffffff !important;
+    border-radius: 8px;
+    width: 420px;
+    max-width: 94%;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    border: none;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+.modal-head {
+    background: #f9fafb !important;
+    color: #111827 !important;
+    padding: 15px;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 700;
+    border-bottom: 1px solid #e5e7eb;
+}
+.modal-close {
+    cursor: pointer;
+    font-size: 24px;
+    line-height: 1;
+    background: none;
+    border: none;
+    color: #6b7280 !important;
+}
+.modal-body {
+    padding: 15px;
+    overflow-y: auto;
+    flex: 1;
+}
+.modal-foot {
+    padding: 15px;
+    border-top: 1px solid #e5e7eb;
+    background: #f9fafb !important;
+    border-radius: 0 0 8px 8px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+.modal-cancel-btn {
+    padding: 8px 16px;
+    background: #ffffff !important;
+    color: #374151 !important;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+}
+.modal-add-btn {
+    padding: 8px 20px;
+    background: #111827 !important;
+    color: #ffffff !important;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+/* Toast */
+.pos-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #111827 !important;
+    color: #ffffff !important;
+    padding: 10px 22px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    z-index: 99999;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    animation: toastSlideUp 0.3s ease;
+}
+.pos-toast.error { background: #ef4444 !important; }
+
+@keyframes toastSlideUp {
+    from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to   { opacity: 1; transform: scale(1); }
+}
+.modal-box {
+    animation: modalFadeIn 0.2s ease;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+/* Invoice Print Override */
+@media print {
+    .pos-layout, .pos-left, .pos-right, .modal-overlay, .modal {
+        display: none !important;
+    }
+    #invoicePrintModal {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+    #thermalInvoiceContent {
+        padding: 0 !important;
+    }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .pos-layout {
+        flex-direction: column;
+        height: auto;
+        overflow: visible;
+    }
+    .pos-left, .pos-right {
+        width: 100%;
+        flex: none;
+        height: auto;
+        min-height: 50vh;
+    }
+}
+
+/* ===================== Invoice Modal ===================== */
+.inv-overlay {
+    display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;
+}
+.inv-overlay.active { display:flex; }
+.inv-box {
+    background:#fff; border-radius:14px; width:850px; max-width:95vw;
+    max-height:95vh; overflow:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2);
+}
+.inv-head {
+    padding:14px 20px; border-bottom:1px solid #f0f0f0;
+    display:flex; justify-content:space-between; align-items:center;
+}
+.inv-head span { font-size:17px; font-weight:700; color:#333; }
+.inv-close {
+    background:none; border:none; font-size:22px; cursor:pointer; color:#999;
+}
+.inv-foot {
+    padding:14px 20px; border-top:1px solid #f0f0f0; display:flex;
+    gap:10px; justify-content:flex-end; background:#fafafa;
+}
+
+/* ===================== Customer Search Dropdown ===================== */
+.cust-results {
+    position:absolute; top:calc(100% + 2px); left:0; right:0;
+    background:#fff; border:1px solid #e0e0e0; border-radius:8px;
+    max-height:200px; overflow-y:auto; z-index:1050;
+    box-shadow:0 6px 16px rgba(0,0,0,0.08);
+}
+.cust-results .ri {
+    padding:8px 12px; cursor:pointer; border-bottom:1px solid #f5f5f5;
+}
+.cust-results .ri:hover { background:#f9f9f9; }
+.cust-results .ri .cn { font-weight:600; font-size:13px; color:#333; }
+.cust-results .ri .cp { font-size:12px; color:#999; }
+.cust-results .nr { padding:12px; color:#ccc; text-align:center; font-size:12px; }
+
+/* ===================== Product Search Dropdown ===================== */
+.psd-item {
+    display:flex; align-items:center; gap:12px; padding:10px 14px;
+    cursor:pointer; border-bottom:1px solid #f5f5f5;
+}
+.psd-item:hover { background:#f9f9f9; }
+.psd-item:last-child { border-bottom:none; }
+.psd-img {
+    width:44px; height:44px; object-fit:cover; border-radius:8px;
+    border:1px solid #eee; flex-shrink:0; background:#f5f5f5;
+}
+.psd-info { flex:1; min-width:0; }
+.psd-name { font-size:13px; font-weight:800; color:#000000; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.psd-meta { font-size:11px; color:#000000; font-weight:700; margin-top:2px; }
+.psd-price { font-size:14px; font-weight:900; color:#000000; white-space:nowrap; }
+.psd-stock-out { font-size:10px; color:#fff; background:#ef4444; border-radius:4px; padding:2px 6px; margin-left:5px; }
+.psd-stock-ok { font-size:10px; color:#fff; background:#22c55e; border-radius:4px; padding:2px 6px; margin-left:5px; }
+.psd-empty { padding:16px; text-align:center; color:#ccc; font-size:13px; }
+
+body.modal-open { overflow:hidden; }
+
+/* =========================================================
+   SENIOR TYPOGRAPHY PASS — one consistent scale for POS
+   Display 20 / Title 15 / Name 13.5 / Body 13-14 / Meta 10-11
+   ========================================================= */
+
+/* Tabular numerals for all money & qty so totals never jitter */
+.cart-table tbody td,
+.qty-num, .disc-num,
+.pay-col-box input,
+.tot-row .tv,
+.tot-row.tot-main .tv,
+#cdpTotal, .sm-inp {
+    font-variant-numeric: tabular-nums;
+}
+
+/* Cart table: roomier rows, clearer hierarchy */
+.cart-table { font-size: 13px; }
+.cart-table thead th {
+    font-size: 10.5px;
+    letter-spacing: 0.8px;
+    padding: 10px 6px;
+}
+.cart-table tbody td { padding: 8px 6px; line-height: 1.45; }
+.qty-num, .disc-num { font-size: 13px; padding: 4px; }
+.qty-btn { width: 26px; height: 26px; }
+.remove-btn { font-size: 15px; padding: 6px; }
+
+/* Payment: bigger amount entry, hero payable total */
+.pay-col-box input { font-size: 14px; padding: 8px 10px; }
+.method-sel { font-size: 14px; padding: 8px 10px; }
+.tot-row { font-size: 13px; }
+.tot-row.tot-main { font-size: 15px; }
+.tot-row.tot-main .tv { font-size: 19px; }
+.sm-sel { font-size: 12px; }
+.sm-inp { font-size: 13px; width: 56px; padding: 4px 6px; }
+
+/* Touch-sized action buttons */
+.pos-btn { font-size: 14px; padding: 12px 15px; min-height: 46px; }
+
+/* Section titles & inputs */
+.prod-header h3 { font-size: 15px; }
+.tb-input, .search-inp { font-size: 14px; }
+.walking-customer-badge { font-size: 13px; }
+
+/* Cart details panel header */
+#cdpTotal { font-size: 14px !important; }
+#cdpCount { font-size: 10.5px !important; }

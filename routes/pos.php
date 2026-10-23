@@ -1,17 +1,16 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\PosController;
 
 Route::middleware(['auth'])->group(function () {
-    // Point of Sale Routes
     Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
-    Route::post('/pos/search-products', [PosController::class, 'searchProducts'])->name('pos.search');
     Route::post('/pos/process-sale', [PosController::class, 'processSale'])->name('pos.process');
-    Route::post('/pos/hold-sale', [PosController::class, 'holdSale'])->name('pos.hold');
-    Route::get('/pos/held-sales', [PosController::class, 'getHeldSales'])->name('pos.held');
-    Route::get('/pos/resume/{holdId}', [PosController::class, 'resumeSale'])->name('pos.resume');
-    Route::get('/pos/stats', [PosController::class, 'getTodayStats'])->name('pos.stats');
-    Route::post('/pos/open-cash-drawer', [PosController::class, 'openCashDrawer'])->name('pos.cash-drawer');
+    Route::get('/pos/add-product-by-barcode/{barcode}', [PosController::class, 'getProductByBarcode'])->name('pos.add-product-by-barcode');
+    Route::post('/pos/scan-barcode', [PosController::class, 'scanByBarcode'])->name('pos.scan-barcode');
+    Route::get('/pos/get-product/{barcode}', [PosController::class, 'getProductByBarcode'])->name('pos.get-product');
+    Route::get('/admin/products/pos-search', [PosController::class, 'posSearch'])->name('pos.product-search');
+    Route::get('/admin/products/search', [PosController::class, 'searchProductsLive'])->name('pos.products.search');
+    Route::get('/admin/customers/search', [PosController::class, 'customerSearch'])->name('pos.customer-search');
+    Route::post('/admin/customers/quick-store', [PosController::class, 'quickCustomerStore'])->name('pos.customer-quick-store');
     Route::get('/pos/receipt/{saleId}', [PosController::class, 'generateReceipt'])->name('pos.receipt');
 });

@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Menu;
+use App\Models\ParentMenu;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,12 +19,11 @@ class AppServiceProvider extends ServiceProvider
             if (Auth::check()) {
 
                 // ── Dynamic menu from database ──
-                $menus = Menu::whereNull('parent_id')
-                            ->where('is_active', true)
-                            ->orderBy('sort_order')
-                            ->with(['children' => function ($q) {
-                                $q->where('is_active', true)
-                                  ->orderBy('sort_order');
+                $menus = ParentMenu::where('status', true)
+                            ->orderBy('position')
+                            ->with(['submenus' => function ($q) {
+                                $q->where('status', true)
+                                  ->orderBy('position');
                             }])
                             ->get();
 
@@ -48,16 +47,16 @@ class AppServiceProvider extends ServiceProvider
                 // ── Database থেকে menu build ──
                 foreach ($menus as $menu) {
                     $item = [
-                        'text' => $menu->text,
-                        'url'  => $menu->url,
+                        'text' => $menu->parentname,
+                        'url'  => $menu->submenus->isNotEmpty() ? '#' : ($menu->mainroute ?: '#'),
                         'icon' => $menu->icon,
                     ];
 
-                    if ($menu->children->count() > 0) {
-                        $item['submenu'] = $menu->children->map(function ($child) {
+                    if ($menu->submenus->count() > 0) {
+                        $item['submenu'] = $menu->submenus->map(function ($child) use ($menu) {
                             return [
-                                'text' => $child->text,
-                                'url'  => $child->url,
+                                'text' => $child->submenuname,
+                                'url'  => $menu->submenuUrl($child),
                                 'icon' => $child->icon,
                             ];
                         })->toArray();

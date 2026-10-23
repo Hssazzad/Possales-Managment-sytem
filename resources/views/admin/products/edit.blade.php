@@ -1,6 +1,8 @@
 @extends('adminlte::page')
 
-@section('title', 'Edit Product | PosSales')
+@section('title')
+    Edit Product | {{ config('app.name') }}
+@endsection
 
 @section('content_header')
 <div class="d-flex justify-content-between align-items-center">
@@ -55,7 +57,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label for="category_id" class="form-label">Category</label>
                                 <select class="form-control" id="category_id" name="category_id">
@@ -66,7 +68,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label for="brand_id" class="form-label">Brand</label>
                                 <select class="form-control" id="brand_id" name="brand_id">
@@ -77,7 +79,18 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="supplier_id" class="form-label">Supplier</label>
+                                <select class="form-control" id="supplier_id" name="supplier_id">
+                                    <option value="">Select Supplier</option>
+                                    @foreach($suppliers as $supplier)
+                                        <option value="{{ $supplier->id }}" {{ old('supplier_id', $product->supplier_id) == $supplier->id ? 'selected' : '' }}>{{ $supplier->company_name ? $supplier->company_name . ' - ' . $supplier->name : $supplier->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label for="unit_id" class="form-label">Unit</label>
                                 <select class="form-control" id="unit_id" name="unit_id">
@@ -122,6 +135,46 @@
                                         <option value="{{ $shelf->id }}" {{ old('shelf_id', $product->shelf_id) == $shelf->id ? 'selected' : '' }}>{{ $shelf->name }} ({{ $shelf->rack->name ?? 'No Rack' }})</option>
                                     @endforeach
                                 </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="color_id" class="form-label">Color</label>
+                                <select class="form-control" id="color_id" name="color_id">
+                                    <option value="">Select Color</option>
+                                    @foreach($colors as $color)
+                                        <option value="{{ $color->id }}" {{ old('color_id', $product->color_id) == $color->id ? 'selected' : '' }}>{{ $color->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="size_id" class="form-label">Size</label>
+                                <select class="form-control" id="size_id" name="size_id">
+                                    <option value="">Select Size</option>
+                                    @foreach($sizes as $size)
+                                        <option value="{{ $size->id }}" {{ old('size_id', $product->size_id) == $size->id ? 'selected' : '' }}>{{ $size->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="pricing_type" class="form-label">Pricing Type</label>
+                                <select class="form-control" id="pricing_type" name="pricing_type">
+                                    <option value="single" {{ old('pricing_type', $product->pricing_type ?? 'single') == 'single' ? 'selected' : '' }}>Single</option>
+                                    <option value="batch" {{ old('pricing_type', $product->pricing_type) == 'batch' ? 'selected' : '' }}>Batch</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="opening_stock" class="form-label">Opening Stock</label>
+                                <input type="number" class="form-control" id="opening_stock" name="opening_stock" value="{{ old('opening_stock', $product->opening_stock ?? 0) }}" min="0">
                             </div>
                         </div>
                     </div>
@@ -224,6 +277,33 @@
                         </div>
                     </div>
 
+                    @if($product->productVariations->isNotEmpty())
+                    <hr>
+                    <h5 style="font-weight:600; margin-bottom:15px;">Variation Stock</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Variation</th>
+                                    <th style="width:150px;">Current Stock</th>
+                                    <th style="width:150px;">New Stock</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($product->productVariations as $variation)
+                                <tr>
+                                    <td>{{ $variation->variation_value }}</td>
+                                    <td>{{ $variation->stock }}</td>
+                                    <td>
+                                        <input type="number" name="variations[{{ $variation->id }}][stock]" class="form-control" value="{{ $variation->stock }}" min="0">
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    @endif
+
                     <div class="form-group mt-4">
                         <button type="submit" class="btn" style="background:#333; color:#fff; border:1px solid #000;">
                             Update Product
@@ -273,3 +353,4 @@ function calculateSalePrice() {
 }
 </script>
 @stop
+

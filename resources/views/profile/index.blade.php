@@ -28,7 +28,7 @@
                 <div class="text-center mb-4">
                     <div style="position:relative; display:inline-block;">
                         <img id="avatarPreview"
-                             src="{{ $user->avatar ? asset('storage/'.$user->avatar) : 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&size=120&background=007bff&color=fff&rounded=true' }}"
+                             src="{{ $user->adminlte_image() }}"
                              alt="Profile Photo"
                              style="width:110px; height:110px; border-radius:50%; object-fit:cover; border:3px solid #007bff; box-shadow:0 3px 12px rgba(0,123,255,0.2);">
                         <label for="avatarInput"
@@ -38,6 +38,11 @@
                     </div>
                     <h5 class="mt-3 mb-0 font-weight-bold" style="color:#343a40;">{{ $user->name }}</h5>
                     <small class="text-muted">{{ $user->email }}</small>
+                    @error('avatar')
+                        <div class="alert alert-danger mt-2 py-2" style="font-size:0.85rem;">{{ $message }}</div>
+                    @enderror
+                    <div><small class="text-muted">ছবি সিলেক্ট করে নিচের <b>Save Changes</b> বাটনে ক্লিক করুন (JPG/PNG/GIF/WEBP, সর্বোচ্চ 5MB)</small></div>
+                    <div id="avatarFileName" class="mt-1" style="font-size:0.8rem; color:#007bff;"></div>
                 </div>
 
                 <hr style="border-color:#f0f0f0;">
@@ -64,34 +69,6 @@
                                        class="form-control @error('email') is-invalid @enderror"
                                        style="border-radius:8px; border:1px solid #e9ecef; font-size:0.9rem;">
                                 @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                            </div>
-                        </div>
-                    </div>
-
-                    <hr style="border-color:#f0f0f0;">
-                    <p class="font-weight-bold mb-3" style="font-size:0.82rem; color:#6c757d; text-transform:uppercase; letter-spacing:0.5px;">
-                        Change Password
-                        <small class="text-muted font-weight-normal">(leave blank to keep current)</small>
-                    </p>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="font-weight-bold" style="font-size:0.82rem; color:#6c757d;">New Password</label>
-                                <input type="password" name="password"
-                                       class="form-control @error('password') is-invalid @enderror"
-                                       style="border-radius:8px; border:1px solid #e9ecef; font-size:0.9rem;"
-                                       placeholder="Min 8 characters">
-                                @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="font-weight-bold" style="font-size:0.82rem; color:#6c757d;">Confirm Password</label>
-                                <input type="password" name="password_confirmation"
-                                       class="form-control"
-                                       style="border-radius:8px; border:1px solid #e9ecef; font-size:0.9rem;"
-                                       placeholder="Repeat password">
                             </div>
                         </div>
                     </div>
@@ -123,11 +100,17 @@
 document.getElementById('avatarInput').addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (file) {
+        if (file.size > 5 * 1024 * 1024) {
+            alert('ছবির সাইজ 5MB এর বেশি! ছোট ছবি সিলেক্ট করুন।');
+            e.target.value = '';
+            return;
+        }
         const reader = new FileReader();
         reader.onload = function(e) {
             document.getElementById('avatarPreview').src = e.target.result;
         };
         reader.readAsDataURL(file);
+        document.getElementById('avatarFileName').textContent = 'Selected: ' + file.name + ' — Save Changes চাপুন';
     }
 });
 </script>

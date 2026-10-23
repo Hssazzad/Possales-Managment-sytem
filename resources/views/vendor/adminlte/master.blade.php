@@ -20,7 +20,6 @@
     </title>
 
     {{-- IFrame Preloader Removal Workaround --}}
-    <!-- IFrame Preloader Removal Workaround -->
     <style type="text/css">
         body.iframe-mode .preloader {
             display: none !important;
@@ -30,7 +29,7 @@
     {{-- Custom stylesheets (pre AdminLTE) --}}
     @yield('adminlte_css_pre')
 
-    {{-- Base Stylesheets (depends on Laravel asset bundling tool) --}}
+    {{-- Base Stylesheets --}}
     @if(config('adminlte.enabled_laravel_mix', false))
         <link rel="stylesheet" href="{{ mix(config('adminlte.laravel_mix_css_path', 'css/app.css')) }}">
     @else
@@ -96,6 +95,74 @@
         <meta name="msapplication-TileImage" content="{{ asset('favicons/ms-icon-144x144.png') }}">
     @endif
 
+    {{-- ✅ Logo CSS — সাদা background এ কালো logo --}}
+    <style>
+        /* ✅ Logo area — সাদা background */
+        .main-sidebar .brand-link,
+        .brand-link {
+            background: #ffffff !important;
+            border-bottom: 2px solid #dee2e6 !important;
+            padding: 10px 15px !important;
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: center !important;
+            overflow: hidden !important;
+            min-height: 60px !important;
+        }
+
+        /* ✅ Logo image */
+        .brand-image {
+            width: 220px !important;
+            height: auto !important;
+            max-height: 55px !important;
+            object-fit: contain !important;
+            margin: 0 !important;
+            display: block !important;
+            filter: none !important;
+            opacity: 1 !important;
+            background: transparent !important;
+        }
+
+        /* ✅ Text লুকানো */
+        .brand-link .brand-text {
+            display: none !important;
+        }
+
+        /* ✅ Sidebar collapse/mini mode */
+        .sidebar-mini.sidebar-collapse .main-sidebar .brand-link {
+            justify-content: center !important;
+            padding: 10px 5px !important;
+            min-height: 50px !important;
+        }
+
+        .sidebar-mini.sidebar-collapse .brand-image {
+            width: 38px !important;
+            height: auto !important;
+            max-height: 38px !important;
+        }
+
+        /* ✅ Top navbar profile photo — গোল, crop ঠিক রাখা */
+        .main-header .user-menu .user-image,
+        .main-header .nav-link .user-image {
+            width: 32px !important;
+            height: 32px !important;
+            object-fit: cover !important;
+            border: 2px solid rgba(255,255,255,0.35) !important;
+        }
+        .user-menu .user-header img {
+            width: 90px !important;
+            height: 90px !important;
+            object-fit: cover !important;
+        }
+
+        .main-header.navbar {
+            background: #1f2937 !important;
+        }
+        body .main-sidebar,
+        body .main-sidebar::before { background: #111827 !important; }
+    </style>
+
 </head>
 
 <body class="@yield('classes_body')" @yield('body_data')>
@@ -103,7 +170,7 @@
     {{-- Body Content --}}
     @yield('body')
 
-    {{-- Base Scripts (depends on Laravel asset bundling tool) --}}
+    {{-- Base Scripts --}}
     @if(config('adminlte.enabled_laravel_mix', false))
         <script src="{{ mix(config('adminlte.laravel_mix_js_path', 'js/app.js')) }}"></script>
     @else

@@ -3,6 +3,8 @@
 .env
 .env.backup
 .env.production
+.env.*
+!.env.example
 .phpactor.json
 .phpunit.result.cache
 /.fleet
@@ -19,6 +21,33 @@
 /storage/*.key
 /storage/pail
 /vendor
+
+# Local AI/editor settings and runtime data
+/.ai
+/.claude
+/.freebuff
+/storage/appdata
+/public/uploads
+
+# One-off deployment, repair, and local diagnostic scripts
+/public/unzip.php
+/public/link.php
+/public/default.php
+/public/js/pos.js.backup
+/check_bb01.php
+/test_return_fix.php
+/fix-autoload.php
+
+# Legacy working notes and a sample schema from an unrelated billing prototype
+/BILLING_QUICK_SETUP.md
+/BILLING_SYSTEM_GUIDE.md
+/CONVERSION_PROGRESS.md
+/DATABASE_SCHEMA.sql
+/IMPLEMENTATION_SUMMARY.md
+/INSTALLATION_CHECKLIST.md
+/README_START_HERE.md
+/STYLING_UPDATE_SUMMARY.md
+/TAILWIND_CSS_GUIDE.md
 Homestead.json
 Homestead.yaml
 Thumbs.db

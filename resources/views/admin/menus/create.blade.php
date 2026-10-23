@@ -1,151 +1,103 @@
 @extends('adminlte::page')
 
-@section('title', 'Add Menu')
+@section('title', 'Manage Submenus')
 
 @section('content_header')
 <div class="d-flex justify-content-between align-items-center">
-    <h1 style="font-size:1.3rem; font-weight:600; color:#343a40;">
-        <i class="fas fa-plus mr-2" style="color:#c0392b;"></i> Add New Menu
-    </h1>
-    <a href="{{ route('menus.index') }}" class="btn btn-secondary btn-sm">
-        <i class="fas fa-arrow-left mr-1"></i> Back
-    </a>
+    <h1>Manage Submenus</h1>
+    <div>
+        <a href="{{ route('menus.index') }}" class="btn btn-secondary btn-sm">
+            <i class="fas fa-arrow-left mr-1"></i> Back to Menu List
+        </a>
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addSubmenuModal">
+            <i class="fas fa-plus mr-1"></i> Add Submenu
+        </button>
+    </div>
 </div>
 @stop
 
 @section('content')
-<div class="card" style="border-radius:10px; border:none; box-shadow:0 2px 12px rgba(0,0,0,0.06); max-width:600px;">
-    <div class="card-body">
-        <form action="{{ route('menus.store') }}" method="POST">
-            @csrf
+<div id="submenu-alert"></div>
 
-            <div class="form-group">
-                <label style="font-weight:600; font-size:0.875rem;">Menu Name <span class="text-danger">*</span></label>
-                <input type="text" name="text" class="form-control @error('text') is-invalid @enderror"
-                       value="{{ old('text') }}" placeholder="e.g. Dashboard">
-                @error('text')<div class="invalid-feedback">{{ $message }}</div>@enderror
-            </div>
-
-            <div class="form-group">
-                <label style="font-weight:600; font-size:0.875rem;">URL <span class="text-danger">*</span></label>
-                <input type="text" name="url" class="form-control @error('url') is-invalid @enderror"
-                       value="{{ old('url', '#') }}" placeholder="e.g. dashboard or #">
-                @error('url')<div class="invalid-feedback">{{ $message }}</div>@enderror
-            </div>
-
-            <div class="form-group">
-                <label style="font-weight:600; font-size:0.875rem;">Icon Class <span class="text-danger">*</span></label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="icon-preview">
-                            <i class="fas fa-fw fa-circle"></i>
-                        </span>
-                    </div>
-                    <input type="text" name="icon" id="icon-input"
-                           class="form-control @error('icon') is-invalid @enderror"
-                           value="{{ old('icon', 'fas fa-fw fa-circle') }}"
-                           placeholder="e.g. fas fa-fw fa-home">
-                </div>
-                <small class="text-muted">
-                    FontAwesome class দিন।
-                    <a href="https://fontawesome.com/icons" target="_blank">Icons দেখুন →</a>
-                </small>
-                @error('icon')<div class="text-danger" style="font-size:0.8rem;">{{ $message }}</div>@enderror
-            </div>
-
-            <div class="form-group">
-                <label style="font-weight:600; font-size:0.875rem;">Parent Menu</label>
-                <select name="parent_id" class="form-control">
-                    <option value="">— Top Level Menu —</option>
-                    @foreach($parents as $parent)
-                    <option value="{{ $parent->id }}" {{ old('parent_id', request('parent_id')) == $parent->id ? 'selected' : '' }}>
-                        {{ $parent->text }}
-                    </option>
-                    @endforeach
-                </select>
-                <small class="text-muted">Submenu হলে parent select করুন</small>
-            </div>
-
-            <div class="form-group">
-                <div class="custom-control custom-switch">
-                    <input type="checkbox" name="is_active" id="is_active" value="1"
-                           class="custom-control-input"
-                           {{ old('is_active') ? 'checked' : '' }}>
-                    <label class="custom-control-label" for="is_active">
-                        <strong>Active Status</strong>
-                        <br>
-                        <small class="text-muted">Enable this menu to show in navigation</small>
-                    </label>
-                </div>
-            </div>
-
-            <button type="submit" class="btn btn-danger">
-                <i class="fas fa-save mr-1"></i> Save Menu
-            </button>
-        </form>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5 style="margin:0; color:#343a40;">
-                    <i class="fas fa-plus mr-2"></i> Add New Menu
-                </h5>
-            </div>
-            <form>
-            </form>
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-sm mb-0">
+                <thead class="thead-light">
+                    <tr>
+                        <th style="width:60px;">SL</th>
+                        <th style="width:140px;">Submenu Code</th>
+                        <th>Submenu Name</th>
+                        <th>Parent Menu</th>
+                        <th>URL</th>
+                        <th style="width:130px;">Display Order</th>
+                        <th style="width:100px;">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="submenu-list">
+                    @forelse($submenus as $submenu)
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td class="text-monospace">{{ $submenu->code ?? $submenu->id }}</td>
+                        <td><i class="{{ $submenu->icon }} mr-2"></i>{{ $submenu->text }}</td>
+                        <td>{{ $submenu->parent?->text }}</td>
+                        <td><code>{{ $submenu->url }}</code></td>
+                        <td>{{ $submenu->sort_order }}</td>
+                        <td>
+                            <span class="badge {{ $submenu->is_active ? 'badge-success' : 'badge-secondary' }}">
+                                {{ $submenu->is_active ? 'Active' : 'Inactive' }}
+                            </span>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr id="empty-submenus">
+                        <td colspan="7" class="text-center py-4 text-muted">No submenus found</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5 style="margin:0; color:#343a40;">
-                    <i class="fas fa-list mr-2"></i> Current Menus
-                </h5>
-            </div>
-            <div class="card-body" style="max-height: 400px; overflow-y: auto;">
-                @php
-                    $allMenus = App\Models\Menu::with('children')->whereNull('parent_id')->orderBy('sort_order')->get();
-                @endphp
-                @if($allMenus->count() > 0)
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>Menu Name</th>
-                                <th>URL</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($allMenus as $menu)
-                                <tr>
-                                    <td>{{ $menu->text }}</td>
-                                    <td>{{ $menu->url }}</td>
-                                    <td>
-                                        <span class="badge {{ $menu->is_active ? 'badge-success' : 'badge-secondary' }}">
-                                            {{ $menu->is_active ? 'Active' : 'Inactive' }}
-                                        </span>
-                                    </td>
-                                </tr>
-                                @foreach($menu->children as $child)
-                                    <tr style="background:#fafafa;">
-                                        <td>↳ {{ $child->text }}</td>
-                                        <td>{{ $child->url }}</td>
-                                        <td>
-                                            <span class="badge {{ $child->is_active ? 'badge-success' : 'badge-secondary' }}">
-                                                {{ $child->is_active ? 'Active' : 'Inactive' }}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                @endforeach
+</div>
+
+<div class="modal fade" id="addSubmenuModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="add-submenu-form" action="{{ route('menus.store') }}" method="POST">
+                @csrf
+                <input type="hidden" name="is_active" value="1">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Submenu</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Parent Main Menu <span class="text-danger">*</span></label>
+                        <select name="parent_id" class="form-control" required>
+                            <option value="">-- Select Parent Main Menu --</option>
+                            @foreach($parents as $parent)
+                            <option value="{{ $parent->id }}">{{ $parent->text }}</option>
                             @endforeach
-                        </tbody>
-                    </table>
-                @else
-                    <p class="text-muted">No menus found</p>
-                @endif
-            </div>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Submenu Name <span class="text-danger">*</span></label>
+                        <input type="text" name="text" class="form-control" placeholder="e.g. Users" required>
+                    </div>
+                    <div class="form-group">
+                        <label>URL <span class="text-danger">*</span></label>
+                        <input type="text" name="url" class="form-control" value="#" placeholder="e.g. admin/users" required>
+                    </div>
+                    <div class="form-group mb-0">
+                        <label>Icon Class <span class="text-danger">*</span></label>
+                        <input type="text" name="icon" class="form-control" value="fas fa-fw fa-circle" placeholder="e.g. fas fa-fw fa-users" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Submenu</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -153,8 +105,53 @@
 
 @section('adminlte_js')
 <script>
-    document.getElementById('icon-input').addEventListener('input', function() {
-        document.querySelector('#icon-preview i').className = this.value;
+document.getElementById('add-submenu-form').addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    const response = await fetch(form.action, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': form.querySelector('[name=_token]').value },
+        body: new FormData(form),
     });
+    const result = await response.json();
+
+    if (!response.ok) {
+        const message = Object.values(result.errors || {}).flat().join('<br>') || 'Unable to save submenu.';
+        document.getElementById('submenu-alert').innerHTML = `<div class="alert alert-danger">${message}</div>`;
+        return;
+    }
+
+    const menu = result.menu;
+    const row = document.createElement('tr');
+    const cell = (value) => {
+        const item = document.createElement('td');
+        item.textContent = value;
+        row.appendChild(item);
+        return item;
+    };
+
+    document.getElementById('empty-submenus')?.remove();
+    cell(document.querySelectorAll('#submenu-list tr').length + 1);
+    cell(menu.code || menu.id);
+    const name = cell('');
+    const icon = document.createElement('i');
+    icon.className = `${menu.icon} mr-2`;
+    name.append(icon, menu.text);
+    cell(menu.parent.text);
+    const url = cell('');
+    const code = document.createElement('code');
+    code.textContent = menu.url;
+    url.appendChild(code);
+    cell(menu.sort_order);
+    const status = cell('');
+    status.innerHTML = `<span class="badge ${menu.is_active ? 'badge-success' : 'badge-secondary'}">${menu.is_active ? 'Active' : 'Inactive'}</span>`;
+    document.getElementById('submenu-list').appendChild(row);
+    document.getElementById('submenu-alert').innerHTML = `<div class="alert alert-success">${result.message}</div>`;
+    $('#addSubmenuModal').modal('hide');
+    form.reset();
+    form.querySelector('[name=url]').value = '#';
+    form.querySelector('[name=icon]').value = 'fas fa-fw fa-circle';
+});
 </script>
 @stop

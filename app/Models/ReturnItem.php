@@ -12,6 +12,7 @@ class ReturnItem extends Model
 
     protected $fillable = [
         'sale_id',
+        'sale_item_id',
         'customer_id',
         'product_id',
         'quantity',
@@ -22,6 +23,8 @@ class ReturnItem extends Model
         'notes',
         'return_date',
     ];
+
+    public const ACTIVE_STATUSES = ['pending', 'approved', 'completed'];
 
     protected $casts = [
         'quantity' => 'integer',
@@ -34,6 +37,11 @@ class ReturnItem extends Model
     public function sale(): BelongsTo
     {
         return $this->belongsTo(Sale::class);
+    }
+
+    public function saleItem(): BelongsTo
+    {
+        return $this->belongsTo(SaleItem::class);
     }
 
     public function customer(): BelongsTo

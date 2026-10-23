@@ -31,4 +31,9 @@ class Model extends EloquentModel
     {
         return $this->hasMany(Product::class);
     }
+       // ProductVariation ?? ???? ?????????
+    public function productVariations()
+    {
+        return $this->hasMany(ProductVariation::class, 'product_id');
+    }
 }

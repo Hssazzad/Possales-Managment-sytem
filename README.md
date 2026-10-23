@@ -1,161 +1,136 @@
-# PosSales Management System
+# BongoBay POS & Inventory Management System
 
-A comprehensive Point of Sale (POS) and inventory management system built with Laravel, featuring complete CRUD operations, stock management, income tracking, and more.
+<p align="center">
+  <a href="https://clothbd.live/login"><strong>View live demo</strong></a>
+  &nbsp;·&nbsp;
+  <a href="#quick-start">Quick start</a>
+  &nbsp;·&nbsp;
+  <a href="#feature-highlights">Features</a>
+</p>
 
-## Features
+A full-featured retail operations platform for shops that need one place to sell products, control inventory, manage purchasing, track cash flow, and review business performance. It is built for day-to-day counter sales and back-office administration.
 
-### Core Management
-- **Product Management**: Complete CRUD with bulk upload, image support, and expired product tracking
-- **Stock Management**: Real-time stock tracking, low stock alerts, and comprehensive reporting
-- **Sales Management**: Full POS functionality with payment tracking and receipt generation
-- **Income Tracking**: Daily income reports with category-based analysis
-- **Customer Management**: Customer database with transaction history
-- **Supplier Management**: Supplier relationships and purchase order tracking
+> **Live application:** [clothbd.live/login](https://clothbd.live/login)<br>
+> Access is intentionally restricted; request demo credentials from the project owner.
 
-### Advanced Features
-- **User Authentication**: Role-based access control with permissions
-- **Multi-Location Support**: Rack, shelf, and bin organization
-- **Reporting**: Comprehensive reports with print and CSV export
-- **Government Design**: Clean, professional interface following government design patterns
-- **Real-time Updates**: Live stock levels and inventory status
+## What it solves
 
-### Technical Features
-- **Database Integration**: MySQL with proper migrations and relationships
-- **Modern UI**: AdminLTE theme with custom styling
-- **Responsive Design**: Mobile-friendly interface
-- **Search & Filter**: Advanced search capabilities across all modules
-- **Bulk Operations**: Efficient bulk upload and management tools
+- Creates fast, barcode-assisted counter sales with customers, discounts, VAT, payment methods, receipts, and sale returns.
+- Keeps product, variant, unit, supplier, purchase, and stock data connected so teams can see availability before selling.
+- Gives owners clear dashboards, profit/loss figures, due tracking, accounting heads, and operational reports.
+- Supports role and permission management so staff receive only the access they need.
 
-## Installation
+## Feature highlights
 
-### Prerequisites
-- PHP 8.0+
-- MySQL/MariaDB
+| Area | Included capabilities |
+| --- | --- |
+| Point of sale | Product search, barcode/phone scanning, customer selection, VAT/discounts, payment capture, receipts, returns |
+| Catalog & inventory | Products, brands, categories, colours, sizes, units, variations, stock alerts, expired-product tracking |
+| Purchasing | Supplier records, purchases, purchase returns, payable and due tracking |
+| Finance & accounting | Income, expenses, payment types, VAT, cash flow, accounting groups and ledger heads |
+| Reporting | Sales, purchase, stock, due, VAT, income/expense, transaction history, and profit/loss reports |
+| Administration | Authentication, user/role/permission management, configurable menus, bilingual-ready language files |
+| Labels | Product barcode generation and printable barcode labels |
+
+## Product tour
+
+### Executive dashboard
+
+At-a-glance sales, profit, expenses, and visual performance reporting let an owner understand store activity immediately.
+
+![BongoBay POS dashboard](docs/screenshots/dashboard.png)
+
+### Counter-ready point of sale
+
+The POS flow keeps product selection and checkout together, with stock status, barcode scanning, customers, discounts, VAT, payment method, and payable total in one screen.
+
+![Point of sale screen](docs/screenshots/point-of-sale.png)
+
+### Inventory control
+
+The product list exposes price, cost, barcode, stock, product codes, variations, and low/out-of-stock status for fast operational decisions.
+
+![Inventory management screen](docs/screenshots/inventory.png)
+
+### Financial structure
+
+Accounting heads provide organised ledger categories and balances for reliable business reporting.
+
+![Accounting heads screen](docs/screenshots/accounting.png)
+
+### Printable barcode labels
+
+Generate clean, store-ready labels containing brand, article code, barcode, pricing, colour, and size information.
+
+![Barcode label preview](docs/screenshots/barcode-labels.png)
+
+## Technology
+
+- **Backend:** PHP 8.2, Laravel 12
+- **Frontend:** Blade, AdminLTE, Bootstrap, Tailwind CSS, Vite
+- **Database:** MySQL/MariaDB or SQLite for local development
+- **Supporting libraries:** DomPDF for documents, Milon Barcode, HTML5 QR/barcode scanning, Spatie permissions
+
+## Quick start
+
+### Requirements
+
+- PHP 8.2 or newer
 - Composer
-- Node.js & NPM
+- Node.js and npm
+- MySQL/MariaDB (or SQLite for local development)
 
-### Setup Instructions
+### Installation
 
-1. **Clone the repository**
 ```bash
 git clone https://github.com/Hssazzad/Possales-Managment-sytem.git
 cd Possales-Managment-sytem
-```
 
-2. **Install dependencies**
-```bash
 composer install
 npm install
-npm run build
-```
-
-3. **Environment setup**
-```bash
-cp .env.example .env
+copy .env.example .env
 php artisan key:generate
 ```
 
-4. **Configure database**
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=possales
-DB_USERNAME=your_username
-DB_PASSWORD=your_password
-```
+Configure the database values in `.env`, then run:
 
-5. **Run migrations and seeders**
 ```bash
-php artisan migrate
-php artisan db:seed
-```
-
-6. **Start the application**
-```bash
+php artisan migrate --seed
+npm run build
 php artisan serve
 ```
 
-## Default Credentials
+Open the address printed by Laravel. Never commit the generated `.env` file; it contains local credentials and application secrets.
 
-After running the seeders, you can login with:
-- **Email**: admin@example.com
-- **Password**: password
+### Development commands
 
-## Modules Overview
+```bash
+# Run the automated test suite
+php artisan test
 
-### Product Management
-- Add, edit, delete products
-- Bulk product upload via CSV
-- Product categorization
-- Image upload support
-- Expired product tracking
-- Stock quantity management
+# Format PHP source
+vendor/bin/pint --dirty
 
-### Stock Management
-- Real-time stock monitoring
-- Low stock alerts (threshold-based)
-- Stock movement tracking
-- Comprehensive stock reports
-- Print and CSV export functionality
+# Run Laravel, queue worker, and Vite together
+composer run dev
+```
 
-### Sales & POS
-- Complete POS interface
-- Payment method support
-- Receipt generation
-- Sales history and reporting
-- Customer integration
+## Security & repository hygiene
 
-### Income Tracking
-- Daily income summaries
-- Category-based income analysis
-- Comprehensive reporting
-- Export functionality
-- Visual income dashboards
+This repository intentionally excludes environment files, runtime uploads, local data, editor/AI settings, and one-off repair/deployment utilities. `.env.example` is retained as the safe configuration template. Before production deployment, use unique application keys, strong passwords, HTTPS, least-privilege database users, and a separate production environment file.
 
-### User Management
-- Role-based access control
-- Permission management
-- User activity tracking
-- Secure authentication
+## Project structure
 
-## Database Structure
-
-The system includes the following main tables:
-- `products` - Product catalog
-- `sales` - Sales transactions
-- `stock` - Inventory tracking
-- `customers` - Customer information
-- `suppliers` - Supplier data
-- `income_categories` - Income categorization
-- `users` - User management
-- `roles` & `permissions` - Access control
-
-## Technologies Used
-
-- **Backend**: Laravel 11
-- **Frontend**: Blade templates with AdminLTE
-- **Database**: MySQL
-- **Styling**: Custom CSS with government design patterns
-- **JavaScript**: Vanilla JS with modern features
-- **Build Tools**: Vite
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+```text
+app/            Application controllers, models, services, and business rules
+database/       Migrations, factories, and seeders
+resources/      Blade views, CSS, and JavaScript source
+routes/         Modular web routes by business area
+public/         Public assets and web entry point
+tests/          Feature and unit tests
+docs/           Portfolio screenshots and supporting documentation
+```
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Support
-
-For support and questions, please open an issue in the GitHub repository.
-
----
-
-**Built with Laravel** - The PHP Framework For Web Artisans
+This project is distributed under the MIT License. See [LICENSE](LICENSE) if included in the repository.

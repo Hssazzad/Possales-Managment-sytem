@@ -20,6 +20,7 @@ class Customer extends Model
         'address',
         'billing_address',
         'city',
+        'area',
         'state',
         'zip_code',
         'country',

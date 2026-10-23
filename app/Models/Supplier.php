@@ -73,4 +73,9 @@ class Supplier extends Model
     {
         return 'Tk' . number_format($this->credit_limit, 2);
     }
+
+    public function purchases()
+    {
+        return $this->hasMany(Purchase::class);
+    }
 }

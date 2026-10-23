@@ -1,0 +1,6 @@
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="800" height="600" fill="#1e40af"/>
+<circle cx="400" cy="300" r="100" fill="#60a5fa"/>
+<path d="M400 200C350 200 300 250 300 300C300 350 350 400 400 400C450 400 500 350 500 300C500 250 450 200 400 200Z" fill="#93c5fd"/>
+<text x="400" y="320" text-anchor="middle" fill="white" font-size="24" font-weight="bold">Hero Video</text>
+</svg>

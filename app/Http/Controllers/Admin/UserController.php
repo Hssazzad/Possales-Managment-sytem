@@ -9,17 +9,15 @@ use App\Models\Menu;
 use App\Models\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:view-users')->only(['index']);
-        $this->middleware('permission:create-users')->only(['create', 'store']);
-        $this->middleware('permission:edit-users')->only(['edit', 'update']);
-        $this->middleware('permission:delete-users')->only(['destroy']);
-        $this->middleware('permission:edit-users')->only(['assignRoles', 'getUserAccess', 'updateMenuAccess']);
+        $this->middleware('permission:users.view')->only(['index', 'show']);
+        $this->middleware('permission:users.create')->only(['create', 'store']);
+        $this->middleware('permission:users.edit')->only(['edit', 'update', 'assignRoles', 'getUserAccess', 'updateMenuAccess']);
+        $this->middleware('permission:users.delete')->only(['destroy']);
     }
 
     public function index()
@@ -37,17 +35,18 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'roles' => 'nullable|array',
-            'roles.*' => 'exists:roles,id',
+            'roles'    => 'nullable|array',
+            'roles.*'  => 'exists:roles,id',
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'name'          => $request->name,
+            'email'         => $request->email,
+            'password'      => Hash::make($request->password),
+            'is_super_admin' => 0, // ✅ নতুন user কখনো Super Admin না
         ]);
 
         if ($request->has('roles')) {
@@ -59,11 +58,17 @@ class UserController extends Controller
 
     public function show(User $user)
     {
+        $user->load('roles');
         return view('admin.users.show', compact('user'));
     }
 
     public function edit(User $user)
     {
+        // ✅ Super Admin কে শুধু Super Admin edit করতে পারবে
+        if ($user->isSuperAdmin() && !auth()->user()->isSuperAdmin()) {
+            return back()->with('error', 'Super Admin কে edit করার permission নেই!');
+        }
+
         $roles = Role::all();
         $userRoles = $user->roles->pluck('id')->toArray();
         return view('admin.users.edit', compact('user', 'roles', 'userRoles'));
@@ -71,27 +76,38 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
+        // ✅ Super Admin কে শুধু Super Admin update করতে পারবে
+        if ($user->isSuperAdmin() && !auth()->user()->isSuperAdmin()) {
+            return back()->with('error', 'Super Admin কে edit করার permission নেই!');
+        }
+
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8|confirmed',
-            'roles' => 'nullable|array',
-            'roles.*' => 'exists:roles,id',
+            'roles'    => 'nullable|array',
+            'roles.*'  => 'exists:roles,id',
         ]);
 
-        $user->update([
-            'name' => $request->name,
+        $data = [
+            'name'  => $request->name,
             'email' => $request->email,
-        ]);
+        ];
+
+        // ✅ শুধু Super Admin অন্যকে Super Admin বানাতে পারবে
+        if (auth()->user()->isSuperAdmin()) {
+            $data['is_super_admin'] = $request->boolean('is_super_admin');
+        }
+
+        $user->update($data);
 
         if ($request->filled('password')) {
             $user->update(['password' => Hash::make($request->password)]);
         }
 
-        if ($request->has('roles')) {
-            $user->roles()->sync($request->roles);
-        } else {
-            $user->roles()->detach();
+        // ✅ Super Admin এর role change হবে না
+        if (!$user->isSuperAdmin()) {
+            $user->roles()->sync($request->roles ?? []);
         }
 
         return redirect()->route('users.index')->with('success', 'User updated successfully!');
@@ -99,8 +115,14 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
+        // ✅ নিজেকে delete করা যাবে না
         if ($user->id === auth()->id()) {
-            return back()->with('error', 'Cannot delete your own account!');
+            return back()->with('error', 'নিজের account delete করা যাবে না!');
+        }
+
+        // ✅ Super Admin কে delete করা যাবে না
+        if ($user->isSuperAdmin()) {
+            return back()->with('error', 'Super Admin কে delete করা যাবে না!');
         }
 
         $user->roles()->detach();
@@ -121,13 +143,8 @@ class UserController extends Controller
     public function getUserAccess(User $user)
     {
         return response()->json([
-            'roles' => $user->roles->pluck('id'),
-            'menus' => $user->permissions()->where('name', 'like', 'access-%')->pluck('name')->map(function($perm) {
-                return str_replace('access-', '', $perm);
-            })->map(function($menuName) use ($user) {
-                $menu = Menu::where('text', ucwords(str_replace('_', ' ', $menuName)))->first();
-                return $menu ? $menu->id : null;
-            })->filter()
+            'roles'          => $user->roles->pluck('id'),
+            'is_super_admin' => $user->isSuperAdmin(),
         ]);
     }
 
@@ -135,43 +152,18 @@ class UserController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'roles' => 'nullable|array',
+            'roles'   => 'nullable|array',
             'roles.*' => 'exists:roles,id',
-            'menus' => 'nullable|array',
-            'menus.*' => 'exists:menus,id',
         ]);
 
         $user = User::findOrFail($request->user_id);
 
-        // Update roles
-        if ($request->has('roles')) {
-            $user->roles()->sync($request->roles);
-        } else {
-            $user->roles()->detach();
+        // ✅ Super Admin এর role change করা যাবে না
+        if ($user->isSuperAdmin()) {
+            return back()->with('error', 'Super Admin এর role change করা যাবে না!');
         }
 
-        // Update menu access by creating menu-specific permissions
-        $menuPermissions = [];
-        if ($request->has('menus')) {
-            foreach ($request->menus as $menuId) {
-                $menu = Menu::find($menuId);
-                if ($menu) {
-                    $permissionName = 'access-' . Str::slug($menu->text, '-');
-                    $permission = Permission::firstOrCreate([
-                        'name' => $permissionName,
-                        'display_name' => 'Access ' . $menu->text,
-                        'description' => 'Access to ' . $menu->text . ' menu'
-                    ]);
-                    $menuPermissions[] = $permission->id;
-                }
-            }
-        }
-
-        // Remove old menu permissions and add new ones
-        $user->permissions()->where('name', 'like', 'access-%')->detach();
-        if (!empty($menuPermissions)) {
-            $user->permissions()->attach($menuPermissions);
-        }
+        $user->roles()->sync($request->roles ?? []);
 
         return redirect()->route('users.assign-roles')->with('success', 'User access updated successfully!');
     }

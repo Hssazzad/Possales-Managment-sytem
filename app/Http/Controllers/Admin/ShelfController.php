@@ -12,15 +12,23 @@ class ShelfController extends Controller
 {
     /**
      * Display a listing of the resource.
+     * ✅ $racks যোগ করা হয়েছে — modal-এ দরকার
      */
     public function index()
     {
-        $shelves = Shelf::with('rack')->orderBy('name')->paginate(20);
-        return view('admin.shelves.index', compact('shelves'));
+        $shelves = Shelf::with('rack')
+                        ->withCount('products')
+                        ->orderBy('name')
+                        ->paginate(20);
+
+        $racks = Rack::where('is_active', true)->orderBy('name')->get();
+
+        return view('admin.shelves.index', compact('shelves', 'racks'));
     }
 
     /**
      * Show the form for creating a new resource.
+     * (Legacy page — modal দিয়ে replace হয়েছে, তবুও রাখা হলো)
      */
     public function create()
     {
@@ -30,15 +38,16 @@ class ShelfController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     * ✅ AJAX (modal) + normal redirect — দুটোই support করে
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'code' => 'nullable|string|max:50|unique:shelves',
-            'rack_id' => 'nullable|exists:racks,id',
+            'name'        => 'required|string|max:255',
+            'code'        => 'nullable|string|max:50|unique:shelves',
+            'rack_id'     => 'nullable|exists:racks,id',
             'description' => 'nullable|string|max:1000',
-            'is_active' => 'boolean',
+            'is_active'   => 'nullable|boolean',
         ]);
 
         if (empty($validated['code'])) {
@@ -47,10 +56,18 @@ class ShelfController extends Controller
 
         $validated['is_active'] = $request->boolean('is_active', true);
 
-        Shelf::create($validated);
+        $shelf = Shelf::create($validated);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Shelf created successfully!',
+                'shelf'   => $shelf,
+            ]);
+        }
 
         return redirect()->route('shelves.index')
-            ->with('success', 'Shelf created successfully!');
+                         ->with('success', 'Shelf created successfully!');
     }
 
     /**
@@ -64,6 +81,7 @@ class ShelfController extends Controller
 
     /**
      * Show the form for editing the specified resource.
+     * (Legacy page — modal দিয়ে replace হয়েছে, তবুও রাখা হলো)
      */
     public function edit(string $id)
     {
@@ -74,17 +92,18 @@ class ShelfController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * ✅ AJAX (modal) + normal redirect — দুটোই support করে
      */
     public function update(Request $request, string $id)
     {
         $shelf = Shelf::findOrFail($id);
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'code' => 'nullable|string|max:50|unique:shelves,code,' . $id,
-            'rack_id' => 'nullable|exists:racks,id',
+            'name'        => 'required|string|max:255',
+            'code'        => 'nullable|string|max:50|unique:shelves,code,' . $id,
+            'rack_id'     => 'nullable|exists:racks,id',
             'description' => 'nullable|string|max:1000',
-            'is_active' => 'boolean',
+            'is_active'   => 'nullable|boolean',
         ]);
 
         if (empty($validated['code'])) {
@@ -95,19 +114,35 @@ class ShelfController extends Controller
 
         $shelf->update($validated);
 
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Shelf updated successfully!',
+                'shelf'   => $shelf->fresh(),
+            ]);
+        }
+
         return redirect()->route('shelves.index')
-            ->with('success', 'Shelf updated successfully!');
+                         ->with('success', 'Shelf updated successfully!');
     }
 
     /**
      * Remove the specified resource from storage.
+     * ✅ AJAX (fetch) + normal redirect — দুটোই support করে
      */
     public function destroy(string $id)
     {
         $shelf = Shelf::findOrFail($id);
         $shelf->delete();
 
+        if (request()->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Shelf deleted successfully!',
+            ]);
+        }
+
         return redirect()->route('shelves.index')
-            ->with('success', 'Shelf deleted successfully!');
+                         ->with('success', 'Shelf deleted successfully!');
     }
 }

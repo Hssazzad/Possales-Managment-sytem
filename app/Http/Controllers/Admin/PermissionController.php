@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -10,10 +9,11 @@ class PermissionController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:view-permissions')->only(['index']);
-        $this->middleware('permission:create-permissions')->only(['create', 'store']);
-        $this->middleware('permission:edit-permissions')->only(['edit', 'update']);
-        $this->middleware('permission:delete-permissions')->only(['destroy']);
+        // ✅ Fixed: view-permissions → roles.view (DB এ আলাদা permission নেই)
+        $this->middleware('permission:roles.view')->only(['index', 'show']);
+        $this->middleware('permission:roles.create')->only(['create', 'store']);
+        $this->middleware('permission:roles.edit')->only(['edit', 'update']);
+        $this->middleware('permission:roles.delete')->only(['destroy']);
     }
 
     public function index()
@@ -30,15 +30,15 @@ class PermissionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:permissions',
+            'name'         => 'required|string|max:255|unique:permissions',
             'display_name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'description'  => 'nullable|string',
         ]);
 
         Permission::create([
-            'name' => $request->name,
+            'name'         => $request->name,
             'display_name' => $request->display_name,
-            'description' => $request->description,
+            'description'  => $request->description,
         ]);
 
         return redirect()->route('permissions.index')->with('success', 'Permission created successfully!');
@@ -46,6 +46,7 @@ class PermissionController extends Controller
 
     public function show(Permission $permission)
     {
+        $permission->load('roles');
         return view('admin.permissions.show', compact('permission'));
     }
 
@@ -57,15 +58,15 @@ class PermissionController extends Controller
     public function update(Request $request, Permission $permission)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:permissions,name,' . $permission->id,
+            'name'         => 'required|string|max:255|unique:permissions,name,' . $permission->id,
             'display_name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'description'  => 'nullable|string',
         ]);
 
         $permission->update([
-            'name' => $request->name,
+            'name'         => $request->name,
             'display_name' => $request->display_name,
-            'description' => $request->description,
+            'description'  => $request->description,
         ]);
 
         return redirect()->route('permissions.index')->with('success', 'Permission updated successfully!');

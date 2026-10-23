@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -13,27 +12,21 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::with('brand')->orderBy('name')->paginate(20);
-        return view('admin.categories.index', compact('categories'));
-    }
-
-    public function create()
-    {
         $brands = Brand::where('is_active', true)->orderBy('name')->get();
-        $variationTypes = ['Capacity', 'Color', 'Size', 'Type', 'Weight'];
-        return view('admin.categories.create', compact('brands', 'variationTypes'));
+        return view('admin.categories.index', compact('categories', 'brands'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:categories',
-            'icon' => 'nullable|string|max:100',
-            'brand_id' => 'nullable|exists:brands,id',
-            'variations' => 'nullable|array',
+            'name'         => 'required|string|max:255',
+            'slug'         => 'nullable|string|max:255|unique:categories',
+            'icon'         => 'nullable|string|max:100',
+            'brand_id'     => 'nullable|exists:brands,id',
+            'variations'   => 'nullable|array',
             'variations.*' => 'string|in:Capacity,Color,Size,Type,Weight',
-            'description' => 'nullable|string|max:1000',
-            'is_active' => 'boolean',
+            'description'  => 'nullable|string|max:1000',
+            'is_active'    => 'boolean',
         ]);
 
         if (empty($validated['slug'])) {
@@ -43,6 +36,13 @@ class CategoryController extends Controller
         $validated['is_active'] = $request->boolean('is_active', true);
 
         Category::create($validated);
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Category created successfully!',
+            ]);
+        }
 
         return redirect()->route('categories.index')
             ->with('success', 'Category created successfully!');
@@ -54,27 +54,19 @@ class CategoryController extends Controller
         return view('admin.categories.show', compact('category'));
     }
 
-    public function edit(string $id)
-    {
-        $category = Category::findOrFail($id);
-        $brands = Brand::where('is_active', true)->orderBy('name')->get();
-        $variationTypes = ['Capacity', 'Color', 'Size', 'Type', 'Weight'];
-        return view('admin.categories.edit', compact('category', 'brands', 'variationTypes'));
-    }
-
     public function update(Request $request, string $id)
     {
         $category = Category::findOrFail($id);
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:categories,slug,' . $id,
-            'icon' => 'nullable|string|max:100',
-            'brand_id' => 'nullable|exists:brands,id',
-            'variations' => 'nullable|array',
+            'name'         => 'required|string|max:255',
+            'slug'         => 'nullable|string|max:255|unique:categories,slug,' . $id,
+            'icon'         => 'nullable|string|max:100',
+            'brand_id'     => 'nullable|exists:brands,id',
+            'variations'   => 'nullable|array',
             'variations.*' => 'string|in:Capacity,Color,Size,Type,Weight',
-            'description' => 'nullable|string|max:1000',
-            'is_active' => 'boolean',
+            'description'  => 'nullable|string|max:1000',
+            'is_active'    => 'boolean',
         ]);
 
         if (empty($validated['slug'])) {
@@ -85,6 +77,13 @@ class CategoryController extends Controller
 
         $category->update($validated);
 
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Category updated successfully!',
+            ]);
+        }
+
         return redirect()->route('categories.index')
             ->with('success', 'Category updated successfully!');
     }
@@ -94,7 +93,23 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
         $category->delete();
 
+        if (request()->expectsJson() || request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Category deleted successfully!',
+            ]);
+        }
+
         return redirect()->route('categories.index')
             ->with('success', 'Category deleted successfully!');
+    }
+
+    // ✅ Product create form এ category select করলে variations আনার জন্য
+    public function getVariations($id)
+    {
+        $category = Category::find($id);
+        return response()->json([
+            'variations' => $category ? ($category->variations ?? []) : []
+        ]);
     }
 }

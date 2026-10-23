@@ -14,40 +14,42 @@
 }
 
 .nav-sidebar .nav-item .nav-link {
-    color: rgba(255, 255, 255, 0.85) !important;
+    color: #000000 !important;
+    font-weight: 700 !important;
 }
 .nav-sidebar .nav-item .nav-link .nav-icon {
-    color: rgba(255, 255, 255, 0.70) !important;
+    color: #000000 !important;
 }
 .nav-sidebar .nav-item .nav-link:hover {
     background-color: rgba(0, 0, 0, 0.25) !important;
-    color: #ffffff !important;
+    color: #000000 !important;
 }
 .nav-sidebar .nav-item .nav-link:hover .nav-icon {
-    color: #ffffff !important;
+    color: #000000 !important;
 }
 .nav-sidebar .nav-item .nav-link.active {
     background-color: #7b241c !important;
-    color: #ffffff !important;
+    color: #000000 !important;
     box-shadow: none !important;
 }
 .nav-sidebar .nav-item .nav-link.active .nav-icon {
-    color: #ffffff !important;
+    color: #000000 !important;
 }
 
 .nav-treeview {
     background-color: rgba(0, 0, 0, 0.15) !important;
 }
 .nav-treeview .nav-item .nav-link {
-    color: rgba(255, 255, 255, 0.80) !important;
+    color: #000000 !important;
+    font-weight: 700 !important;
 }
 .nav-treeview .nav-item .nav-link:hover {
     background-color: rgba(0, 0, 0, 0.20) !important;
-    color: #ffffff !important;
+    color: #000000 !important;
 }
 .nav-treeview .nav-item .nav-link.active {
     background-color: #7b241c !important;
-    color: #ffffff !important;
+    color: #000000 !important;
 }
 
 .main-header.navbar {

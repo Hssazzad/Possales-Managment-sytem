@@ -2,209 +2,187 @@
 
 @section('title', 'Low Stock Items | PosSales')
 
-@section('content_header')
-<div class="d-flex justify-content-between align-items-center">
-    <h1 style="font-size:1.3rem; font-weight:600; color:#000000;">
-        <i class="fas fa-exclamation-triangle mr-2" style="color:#e67e00;"></i> Low Stock Items
-    </h1>
-    <div>
-        <button onclick="window.printStock()" class="btn btn-secondary btn-sm" style="background:#ffffff; color:#000000; border:2px solid #333333; margin-right:10px;">
-            <i class="fas fa-print mr-1"></i> Print
-        </button>
-        <button onclick="window.exportToCSV()" class="btn btn-secondary btn-sm" style="background:#ffffff; color:#000000; border:2px solid #333333;">
-            <i class="fas fa-file-csv mr-1"></i> Export CSV
-        </button>
-        <a href="{{ route('stock.index') }}" class="btn btn-secondary btn-sm" style="background:#ffffff; color:#000000; border:2px solid #333333;">
-            <i class="fas fa-arrow-left mr-1"></i> Back to All Stock
-        </a>
-    </div>
-</div>
+@section('adminlte_css')
+    <link rel="stylesheet" href="{{ asset('css/custom-list.css') }}">
+    <style>
+        @media print {
+            body * { visibility: hidden; }
+            .no-print { display: none !important; }
+            .list-container, .list-container * { visibility: visible; }
+            .list-container { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; border: none; }
+            th:last-child, td:last-child { display: none !important; }
+        }
+    </style>
 @stop
 
 @section('content')
-<div class="row">
-    <div class="col-md-12">
-        {{-- Summary Cards --}}
-        <div style="display:flex; gap:16px; margin-bottom:20px; flex-wrap:wrap;">
-            <div style="flex:1; min-width:160px; background:#fff8ee; border:2px solid #ffd799; border-radius:4px; padding:16px;">
-                <div style="font-size:12px; color:#e67e00; font-weight:600; text-transform:uppercase; letter-spacing:.5px;">Low Stock Items</div>
-                <div style="font-size:28px; font-weight:700; color:#e67e00; margin-top:4px;">{{ $products->count() }}</div>
-            </div>
-            <div style="flex:1; min-width:160px; background:#ffffff; border:2px solid #333333; border-radius:4px; padding:16px;">
-                <div style="font-size:12px; color:#666666; font-weight:600; text-transform:uppercase; letter-spacing:.5px;">Total Stock Units</div>
-                <div style="font-size:28px; font-weight:700; color:#000000; margin-top:4px;">{{ $products->sum('stock_quantity') }}</div>
-            </div>
-            <div style="flex:1; min-width:160px; background:#ffffff; border:2px solid #333333; border-radius:4px; padding:16px;">
-                <div style="font-size:12px; color:#666666; font-weight:600; text-transform:uppercase; letter-spacing:.5px;">Critical (2)</div>
-                <div style="font-size:28px; font-weight:700; color:#cc0000; margin-top:4px;">{{ $products->where('stock_quantity', '<=', 2)->count() }}</div>
+<div class="pt-4">
+    <div class="list-container">
+
+        {{-- Top Toolbar --}}
+        <div class="top-toolbar no-print">
+            <form method="GET" action="{{ route('stock.low') }}" style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center;flex:1;">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by product name, code or variation...">
+                </div>
+                <select name="filter" onchange="this.form.submit()" class="form-control" style="max-width:200px;">
+                    <option value="all"       {{ request('filter','all') === 'all'       ? 'selected' : '' }}>All Low Stock</option>
+                    <option value="critical"  {{ request('filter') === 'critical'        ? 'selected' : '' }}>Critical (&le;2)</option>
+                    <option value="low"       {{ request('filter') === 'low'             ? 'selected' : '' }}>Low (3&ndash;5)</option>
+                    <option value="variation" {{ request('filter') === 'variation'       ? 'selected' : '' }}>Variations Only</option>
+                    <option value="product"   {{ request('filter') === 'product'         ? 'selected' : '' }}>Products Only</option>
+                </select>
+                <button type="submit" class="btn-export">
+                    <i class="fas fa-search mr-1"></i> Search
+                </button>
+                @if(request('search') || (request('filter') && request('filter') !== 'all'))
+                    <a href="{{ route('stock.low') }}" class="btn-add-new bg-secondary">
+                        <i class="fas fa-times mr-1"></i> Clear
+                    </a>
+                @endif
+            </form>
+
+            <div class="action-buttons">
+                <button onclick="window.print()" class="btn-export">
+                    <i class="fas fa-print mr-1"></i> Print
+                </button>
+                <a href="{{ route('stock.lowstock.export', request()->only(['search','filter'])) }}" class="btn-export" style="background-color:#10b981;color:white;border:none;text-decoration:none;display:inline-flex;align-items:center;padding:0.5rem 1rem;border-radius:4px;">
+                    <i class="fas fa-file-csv mr-1"></i> Export CSV
+                </a>
+                <a href="{{ route('stock.index') }}" class="btn-add-new bg-secondary">
+                    <i class="fas fa-arrow-left mr-1"></i> Back
+                </a>
             </div>
         </div>
 
-        {{-- Main Table --}}
-        <div class="card" style="background:#ffffff; border:2px solid #333333; border-radius:4px;">
-            <div class="card-header" style="background:#fff8ee; border-bottom:2px solid #ffd799; padding:16px;">
-                <h5 style="margin:0; font-weight:600; color:#e67e00;">
-                    <i class="fas fa-exclamation-triangle mr-2"></i> Low Stock Items (5 units)
-                </h5>
-            </div>
-            <div class="card-body" style="padding:20px;">
-                <div class="table-responsive" style="border:2px solid #333333; border-radius:4px; overflow:hidden;">
-                    <table class="table" style="margin:0; border-collapse:collapse;">
-                        <thead>
-                            <tr style="background:#fff8ee; border-bottom:2px solid #ffd799;">
-                                <th style="padding:12px; font-weight:600; color:#000000; border-right:1px solid #ffd799;">SL.</th>
-                                <th style="padding:12px; font-weight:600; color:#000000; border-right:1px solid #ffd799;">Image</th>
-                                <th style="padding:12px; font-weight:600; color:#000000; border-right:1px solid #ffd799;">Product Name</th>
-                                <th style="padding:12px; font-weight:600; color:#000000; border-right:1px solid #ffd799;">Code</th>
-                                <th style="padding:12px; font-weight:600; color:#000000; border-right:1px solid #ffd799;">Stock</th>
-                                <th style="padding:12px; font-weight:600; color:#000000; border-right:1px solid #ffd799;">Unit</th>
-                                <th style="padding:12px; font-weight:600; color:#000000; border-right:1px solid #ffd799;">Sale Price</th>
-                                <th style="padding:12px; font-weight:600; color:#000000;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($products as $product)
-                            <tr>
-                                <td style="padding:12px; border-right:1px solid #333333; border-bottom:1px solid #333333;">{{ $loop->index + 1 }}</td>
-                                <td style="padding:12px; border-right:1px solid #333333; border-bottom:1px solid #333333;">
-                                    @if($product->image_url)
-                                        <img src="{{ $product->image_url }}" alt="{{ $product->name }}" style="width:40px; height:40px; object-fit:cover; border-radius:4px; border:1px solid #333333;">
-                                    @else
-                                        <div style="width:40px; height:40px; background:#f5f5f5; border:1px solid #333333; border-radius:4px; display:flex; align-items:center; justify-content:center; color:#666666; font-size:12px;">
-                                            <i class="fas fa-box"></i>
-                                        </div>
-                                    @endif
-                                </td>
-                                <td style="padding:12px; border-right:1px solid #333333; border-bottom:1px solid #333333; color:#000000;">{{ $product->name }}</td>
-                                <td style="padding:12px; border-right:1px solid #333333; border-bottom:1px solid #333333; color:#000000;">{{ $product->code ?? '-' }}</td>
-                                <td style="padding:12px; border-right:1px solid #333333; border-bottom:1px solid #333333; font-weight:600;
-                                    color:{{ $product->stock_quantity <= 2 ? '#cc0000' : '#e67e00' }};">
-                                    {{ $product->stock_quantity }}
-                                </td>
-                                <td style="padding:12px; border-right:1px solid #333333; border-bottom:1px solid #333333; color:#000000;">{{ $product->unit ?? 'pcs' }}</td>
-                                <td style="padding:12px; border-right:1px solid #333333; border-bottom:1px solid #333333; color:#000000;">{{ number_format($product->price, 2) }}</td>
-                                <td style="padding:12px; border-bottom:1px solid #333333;">
-                                    <div class="btn-group btn-group-sm" style="gap:4px;">
-                                        <a href="{{ route('products.show', $product->id) }}" class="btn btn-sm" title="View" style="background:#ffffff; color:#000000; border:2px solid #333333; padding:6px 10px;">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="{{ route('products.edit', $product->id) }}" class="btn btn-sm" title="Edit" style="background:#ffffff; color:#000000; border:2px solid #333333; padding:6px 10px;">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="8" class="text-center py-4" style="color:#000000;">
-                                    <i class="fas fa-check-circle fa-3x mb-3" style="display:block; opacity:0.3; color:#000000;"></i>
-                                    <h5 style="color:#000000;">No low stock items</h5>
-                                    <p style="color:#666666;">All products have sufficient stock levels (6 units)</p>
-                                </td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        {{-- Stats --}}
+        <div class="d-flex flex-wrap mb-3 no-print" style="gap:0.75rem;">
+            <span class="badge badge-light border" style="font-size:13px;padding:8px 14px;">
+                Total: <strong class="text-warning">{{ $all->count() }}</strong>
+            </span>
+            <span class="badge badge-light border" style="font-size:13px;padding:8px 14px;">
+                Critical (&le;2): <strong class="text-danger">{{ $all->where('stock_quantity','<=',2)->count() }}</strong>
+            </span>
+            <span class="badge badge-light border" style="font-size:13px;padding:8px 14px;">
+                Variations: <strong style="color:#7b1fa2;">{{ $all->where('is_variation',true)->count() }}</strong>
+            </span>
+            <span class="badge badge-light border" style="font-size:13px;padding:8px 14px;">
+                Total Units: <strong class="text-primary">{{ $all->sum('stock_quantity') }}</strong>
+            </span>
         </div>
+
+        {{-- Table --}}
+        <div class="table-responsive">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th style="width:50px;">#</th>
+                        <th style="width:60px;">Image</th>
+                        <th>Product Name</th>
+                        <th>Variation</th>
+                        <th>Code</th>
+                        <th class="text-center">Stock</th>
+                        <th class="text-center">Unit</th>
+                        <th class="text-right">Price</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center no-print"><i class="fas fa-cog"></i></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($all as $row)
+                    <tr>
+                        <td class="text-muted font-weight-bold">{{ $loop->iteration }}</td>
+
+                        <td>
+                            @if($row->image)
+                                <img src="{{ asset('storage/' . $row->image) }}"
+                                    style="width:35px;height:35px;object-fit:cover;border-radius:4px;border:1px solid #e5e7eb;"
+                                    onerror="this.style.display='none'">
+                            @else
+                                <div style="width:35px;height:35px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;border-radius:4px;border:1px solid #e5e7eb;">
+                                    <i class="fas fa-box text-muted" style="font-size:14px;"></i>
+                                </div>
+                            @endif
+                        </td>
+
+                        <td class="font-weight-bold text-dark">{{ $row->name }}</td>
+
+                        <td>
+                            @if($row->is_variation)
+                                <span class="badge" style="background:#ede7f6;color:#4527a0;font-size:0.8rem;padding:4px 10px;border-radius:20px;">
+                                    <i class="fas fa-tag" style="font-size:0.7rem;"></i>
+                                    {{ $row->variation_label }}
+                                </span>
+                            @else
+                                <span class="text-muted">&mdash;</span>
+                            @endif
+                        </td>
+
+                        <td class="text-muted">{{ $row->code ?? '-' }}</td>
+
+                        <td class="text-center font-weight-bold">
+                            @if(($row->stock_quantity ?? 0) <= 2)
+                                <span class="status-badge status-inactive">{{ $row->stock_quantity ?? 0 }}</span>
+                            @else
+                                <span class="status-badge" style="background-color:#fef08a;color:#854d0e;">{{ $row->stock_quantity ?? 0 }}</span>
+                            @endif
+                        </td>
+
+                        <td class="text-center text-muted">{{ $row->unit ?? 'pcs' }}</td>
+
+                        <td class="text-right font-weight-bold">
+                            ৳{{ number_format($row->price ?? 0, 2) }}
+                        </td>
+
+                        <td class="text-center">
+                            @if(($row->stock_quantity ?? 0) <= 2)
+                                <span class="badge badge-danger" style="font-size:0.78rem;">&#9888; CRITICAL</span>
+                            @else
+                                <span class="badge badge-warning" style="font-size:0.78rem;">&#9889; LOW</span>
+                            @endif
+                        </td>
+
+                        <td class="text-center no-print">
+                            <div class="dropdown">
+                                <button class="btn btn-link text-muted p-0" type="button" data-toggle="dropdown">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right shadow-sm border-0">
+                                    <a class="dropdown-item" href="{{ route('products.show', $row->id) }}">
+                                        <i class="fas fa-eye text-primary mr-2"></i> View
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('products.edit', $row->id) }}">
+                                        <i class="fas fa-edit text-warning mr-2"></i> Edit
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="10" class="text-center py-5">
+                            <div class="text-muted">
+                                <i class="fas fa-check-circle fa-3x mb-3 text-success"></i>
+                                <h5>No Low Stock Items Found</h5>
+                                <p>All products and variations have sufficient stock.</p>
+                                <a href="{{ route('stock.index') }}" class="btn-add-new mt-2 d-inline-block">
+                                    <i class="fas fa-warehouse mr-1"></i> View All Stock
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        @if($all->count() > 0)
+        <div class="d-flex justify-content-between align-items-center mt-4 pt-3 no-print" style="border-top:1px solid #e5e7eb;">
+            <div class="text-muted text-sm">Showing {{ $all->count() }} items</div>
+        </div>
+        @endif
+
     </div>
 </div>
-@stop
-
-@section('adminlte_js')
-<script>
-// Make functions globally available
-window.exportToCSV = function() {
-    try {
-        const products = @json($products);
-        
-        if (!products || products.length === 0) {
-            alert('No data available to export');
-            return;
-        }
-        
-        let csv = 'SL.,Product Name,Code,Current Stock,Unit,Sale Price,Status\n';
-        
-        products.forEach((product, index) => {
-            const sl = index + 1;
-            const name = (product.name || '').replace(/"/g, '""');
-            const code = (product.code || '').replace(/"/g, '""');
-            const stock = product.stock_quantity || 0;
-            const unit = (product.unit || 'pcs').replace(/"/g, '""');
-            const price = product.price || 0;
-            const status = stock <= 2 ? 'Critical' : 'Low Stock';
-            
-            csv += `${sl},"${name}","${code}","${stock}","${unit}","${price}","${status}"\n`;
-        });
-        
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'low_stock_' + new Date().toISOString().slice(0,10) + '.csv';
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        
-        console.log('CSV export completed');
-    } catch (error) {
-        console.error('CSV export error:', error);
-        alert('Error exporting CSV: ' + error.message);
-    }
-};
-
-window.printStock = function() {
-    try {
-        console.log('Print function called');
-        window.print();
-    } catch (error) {
-        console.error('Print error:', error);
-        alert('Error printing: ' + error.message);
-    }
-};
-
-// Debug: Check if data is available
-console.log('Products data:', @json($products));
-
-// Auto-call export when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Low stock page loaded');
-    console.log('Functions available:', typeof window.exportToCSV, typeof window.printStock);
-});
-</script>
-@stop
-
-@section('adminlte_css')
-<style>
-body { background: #ffffff !important; }
-.table tbody tr:hover { background: #f5f5f5 !important; }
-.btn:hover { background: #f5f5f5 !important; border-color: #000000 !important; }
-.form-control:focus { border-color: #000000 !important; box-shadow: none !important; }
-@media print {
-    body * { visibility: hidden; }
-    .no-print { display: none !important; }
-    .print-only { display: block !important; }
-    .table-responsive { display: block !important; }
-    .card { display: block !important; }
-    .card-header { display: block !important; }
-    .card-body { display: block !important; }
-    table { display: block !important; }
-    thead { display: table-header-group !important; }
-    tbody { display: table-row-group !important; }
-    tr { display: table-row !important; }
-    th, td {
-        display: table-cell !important;
-        border: 1px solid #000 !important;
-        padding: 8px !important;
-        vertical-align: top !important;
-    }
-    th {
-        background: #f5f5f5 !important;
-        font-weight: bold !important;
-        color: #000 !important;
-    }
-}
-</style>
 @stop

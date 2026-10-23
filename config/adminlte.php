@@ -2,7 +2,7 @@
 
 return [
 
-    'title' => 'Possales',
+    'title' => 'BongoBay',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -13,12 +13,12 @@ return [
         'allowed' => true,
     ],
 
-    'logo' => '<b>Possales</b>',
-    'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-    'logo_img_class' => 'brand-image img-circle elevation-3',
+    'logo' => '',
+    'logo_img' => 'images/bongobay-logo.jpg',
+    'logo_img_class' => 'brand-image',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'Possales',
+    'logo_img_alt' => 'BongoBay',
 
     'auth_logo' => [
         'enabled' => false,
@@ -32,7 +32,7 @@ return [
     ],
 
     'preloader' => [
-        'enabled' => true,
+        'enabled' => false,
         'mode' => 'fullscreen',
         'img' => [
             'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
@@ -44,11 +44,11 @@ return [
     ],
 
     'usermenu_enabled' => true,
-    'usermenu_header' => false,
+    'usermenu_header' => true,
     'usermenu_header_class' => 'bg-primary',
     'usermenu_image' => true,
     'usermenu_desc' => true,
-    'usermenu_profile_url' => false,
+    'usermenu_profile_url' => true,
 
     'layout_topnav' => null,
     'layout_boxed' => null,
@@ -65,7 +65,7 @@ return [
     'classes_auth_btn' => 'btn-flat btn-primary',
 
     'classes_body'             => 'sidebar-mini layout-fixed sidebar-dark-primary',
-    'classes_brand'            => 'bg-danger',
+    'classes_brand'            => '',
     'classes_brand_text'       => 'text-white',
     'classes_content_wrapper'  => 'bg-light',
     'classes_content_header'   => '',
@@ -220,6 +220,12 @@ return [
             'active' => true,
             'files'  => [
                 ['type' => 'js', 'asset' => false, 'location' => '//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.bundle.min.js'],
+            ],
+        ],
+        'Sweetalert2' => [
+            'active' => true,
+            'files'  => [
+                ['type' => 'js', 'asset' => false, 'location' => '//cdn.jsdelivr.net/npm/sweetalert2@11'],
             ],
         ],
     ],

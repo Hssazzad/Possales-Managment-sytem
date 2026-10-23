@@ -39,7 +39,13 @@ class MenuController extends Controller
                        ->orderBy('sort_order')
                        ->get();
 
-        return view('admin.menus.create', compact('parents'));
+        $submenus = Menu::whereNotNull('parent_id')
+                        ->with('parent')
+                        ->orderBy('parent_id')
+                        ->orderBy('sort_order')
+                        ->get();
+
+        return view('admin.menus.create', compact('parents', 'submenus'));
     }
 
     public function show(Menu $menu)
@@ -65,9 +71,17 @@ class MenuController extends Controller
         $data['sort_order'] = $data['sort_order']
             ?? (Menu::where('parent_id', $data['parent_id'] ?? null)->max('sort_order') + 1);
 
+        $data['code'] = Menu::generateCode($data['parent_id'] ?? null);
         $data['is_active'] = $request->has('is_active');
 
-        Menu::create($data);
+        $menu = Menu::create($data);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Submenu created successfully!',
+                'menu' => $menu->load('parent'),
+            ], 201);
+        }
 
         return redirect()->route('menus.index')
                          ->with('success', 'Menu created successfully!');

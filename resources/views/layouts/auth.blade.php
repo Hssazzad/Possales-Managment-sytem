@@ -7,12 +7,23 @@
 
     <title>{{ config('app.name', 'PosSales') }} — @yield('title', 'Login')</title>
 
-    <link rel="dns-prefetch" href="//fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
-
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
+        :root {
+            --auth-bg: #f0f4f8;
+            --auth-surface: #ffffff;
+            --auth-border: #e2e8f0;
+            --auth-text: #0f172a;
+            --auth-muted: #64748b;
+            --auth-accent: #0e7490;
+            --auth-accent-soft: #e0f2fe;
+            --auth-radius: 16px;
+            --auth-shadow: 0 4px 32px rgba(15, 23, 42, 0.08);
+        }
+
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
@@ -21,52 +32,48 @@
             align-items: center;
             justify-content: center;
             padding: 2rem 1rem;
-            font-family: 'Nunito', 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Inter', system-ui, sans-serif;
             background:
-                radial-gradient(ellipse at 20% 50%, rgba(201,168,76,0.07) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 20%, rgba(26,90,160,0.10) 0%, transparent 55%),
-                #0f1c2e;
+                radial-gradient(ellipse 80% 60% at 10% 20%, rgba(14, 116, 144, 0.06), transparent),
+                radial-gradient(ellipse 60% 50% at 90% 80%, rgba(15, 23, 42, 0.04), transparent),
+                var(--auth-bg);
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* ── Card ── */
         .auth-card {
             width: 100%;
-            max-width: 460px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.10);
-            border-radius: 18px;
+            max-width: 440px;
+            background: var(--auth-surface);
+            border: 1px solid var(--auth-border);
+            border-radius: var(--auth-radius);
             padding: 2.5rem 2.25rem 2rem;
-            box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+            box-shadow: var(--auth-shadow);
             animation: fadeUp 0.45s ease both;
         }
 
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to   { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ── Brand ── */
-        .auth-brand {
-            text-align: center;
-            margin-bottom: 1.75rem;
-        }
+        .auth-brand { text-align: center; margin-bottom: 1.75rem; }
 
         .auth-logo {
-            width: 68px;
-            height: 68px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #c9a84c, #e0c06a);
+            width: 64px;
+            height: 64px;
+            border-radius: 14px;
+            background: var(--auth-accent-soft);
             margin: 0 auto 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 0 7px rgba(201,168,76,0.13);
+            border: 1px solid #bae6fd;
         }
 
         .auth-logo svg {
             width: 30px;
             height: 30px;
-            stroke: #1a2a4a;
+            stroke: var(--auth-accent);
             fill: none;
             stroke-width: 2;
             stroke-linecap: round;
@@ -74,61 +81,59 @@
         }
 
         .auth-company {
-            font-size: 28px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            color: #f0e6c8;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            color: var(--auth-text);
             margin-bottom: 4px;
         }
 
-        .auth-company span { color: #c9a84c; }
+        .auth-company span { color: var(--auth-accent); }
 
         .auth-tagline {
-            font-size: 11px;
-            color: #5a7a9a;
-            letter-spacing: 1.8px;
+            font-size: 0.68rem;
+            color: var(--auth-muted);
+            letter-spacing: 0.14em;
             text-transform: uppercase;
+            font-weight: 600;
         }
 
         .auth-divider {
             border: none;
-            border-top: 1px solid rgba(255,255,255,0.07);
+            border-top: 1px solid var(--auth-border);
             margin: 1.5rem 0;
         }
 
-        /* ── Alerts ── */
         .alert-success {
-            background: rgba(40,167,69,0.15);
-            border: 1px solid rgba(40,167,69,0.3);
-            border-radius: 8px;
-            color: #6fcf97;
-            font-size: 13px;
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            border-radius: 10px;
+            color: #065f46;
+            font-size: 0.8125rem;
             padding: 10px 14px;
             margin-bottom: 1.25rem;
         }
 
         .alert-danger {
-            background: rgba(220,53,69,0.12);
-            border: 1px solid rgba(220,53,69,0.3);
-            border-radius: 8px;
-            color: #e07070;
-            font-size: 13px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 10px;
+            color: #991b1b;
+            font-size: 0.8125rem;
             padding: 10px 14px;
             margin-bottom: 1.25rem;
         }
 
-        /* ── Labels ── */
         .pos-label {
             display: block;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 1px;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
             text-transform: uppercase;
-            color: #6a8aaa;
+            color: var(--auth-muted);
             margin-bottom: 7px;
         }
 
-        /* ── Fields ── */
         .pos-field { margin-bottom: 1.1rem; }
 
         .pos-input-wrap { position: relative; }
@@ -140,47 +145,45 @@
             transform: translateY(-50%);
             width: 16px;
             height: 16px;
-            stroke: #c9a84c;
+            stroke: var(--auth-accent);
             fill: none;
             stroke-width: 2;
             stroke-linecap: round;
             stroke-linejoin: round;
-            opacity: 0.75;
+            opacity: 0.65;
             pointer-events: none;
         }
 
         .pos-input {
             width: 100%;
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.12);
+            background: #f8fafc;
+            border: 1px solid var(--auth-border);
             border-radius: 10px;
-            color: #e8f0f8;
-            font-size: 14px;
+            color: var(--auth-text);
+            font-size: 0.9rem;
             font-family: inherit;
             padding: 11px 13px 11px 40px;
             outline: none;
-            transition: border-color 0.2s, background 0.2s;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
 
-        .pos-input::placeholder { color: #2e4a62; }
+        .pos-input::placeholder { color: #94a3b8; }
 
         .pos-input:focus {
-            border-color: rgba(201,168,76,0.5);
-            background: rgba(255,255,255,0.09);
+            border-color: var(--auth-accent);
+            box-shadow: 0 0 0 3px rgba(14, 116, 144, 0.12);
+            background: var(--auth-surface);
         }
 
-        .pos-input.is-invalid {
-            border-color: rgba(220,53,69,0.55);
-        }
+        .pos-input.is-invalid { border-color: #f87171; }
 
         .invalid-feedback {
             display: block;
-            color: #e07070;
-            font-size: 12px;
+            color: #dc2626;
+            font-size: 0.75rem;
             margin-top: 5px;
         }
 
-        /* ── Remember / Forgot row ── */
         .pos-meta {
             display: flex;
             align-items: center;
@@ -192,85 +195,76 @@
             display: flex;
             align-items: center;
             gap: 7px;
-            font-size: 13px;
-            color: #6a8aaa;
+            font-size: 0.8125rem;
+            color: var(--auth-muted);
             cursor: pointer;
             user-select: none;
         }
 
         .pos-check-label input[type="checkbox"] {
-            accent-color: #c9a84c;
+            accent-color: var(--auth-accent);
             width: 15px;
             height: 15px;
             cursor: pointer;
         }
 
         .pos-link {
-            font-size: 12px;
-            color: #c9a84c;
+            font-size: 0.75rem;
+            color: var(--auth-accent);
             text-decoration: none;
-            transition: opacity 0.2s;
+            font-weight: 500;
         }
 
-        .pos-link:hover { opacity: 0.7; color: #c9a84c; }
+        .pos-link:hover { text-decoration: underline; }
 
-        /* ── Submit button ── */
         .pos-btn {
             width: 100%;
-            background: linear-gradient(135deg, #c9a84c, #dbb85a);
+            background: linear-gradient(180deg, #0891b2 0%, #0e7490 100%);
             border: none;
             border-radius: 10px;
-            color: #1a2a4a;
-            font-size: 14px;
-            font-weight: 800;
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 600;
             font-family: inherit;
-            letter-spacing: 0.8px;
+            letter-spacing: 0.02em;
             padding: 12px;
             cursor: pointer;
-            text-transform: uppercase;
-            transition: opacity 0.2s, transform 0.15s;
+            box-shadow: 0 1px 3px rgba(14, 116, 144, 0.25);
+            transition: filter 0.2s, transform 0.15s;
         }
 
-        .pos-btn:hover  { opacity: 0.88; }
-        .pos-btn:active { transform: scale(0.98); }
+        .pos-btn:hover { filter: brightness(1.05); }
+        .pos-btn:active { transform: scale(0.99); }
 
-        /* ── Footer ── */
         .auth-footer {
             text-align: center;
             margin-top: 1.5rem;
-            color: #2e4a62;
-            font-size: 11px;
+            color: var(--auth-muted);
+            font-size: 0.6875rem;
         }
     </style>
 </head>
 <body>
     <div class="auth-card">
 
-        {{-- Brand --}}
         <div class="auth-brand">
             <div class="auth-logo">
-                <svg viewBox="0 0 24 24">
-                    <rect x="2" y="3" width="20" height="14" rx="2"/>
-                    <path d="M8 21h8M12 17v4"/>
-                    <circle cx="7"  cy="8"  r="1" fill="#1a2a4a"/>
-                    <circle cx="12" cy="8"  r="1" fill="#1a2a4a"/>
-                    <circle cx="17" cy="8"  r="1" fill="#1a2a4a"/>
-                    <circle cx="7"  cy="12" r="1" fill="#1a2a4a"/>
-                    <circle cx="12" cy="12" r="1" fill="#1a2a4a"/>
-                    <circle cx="17" cy="12" r="1" fill="#1a2a4a"/>
-                </svg>
+                <img src="/images/logo.png" alt="Bongo Bay" style="width:42px;height:42px;object-fit:contain;">
             </div>
-            <h1 class="auth-company">Pos<span>Sales</span></h1>
-            <p class="auth-tagline">Sales Management Portal</p>
+            <h1 class="auth-company">Bongo <span>Bay</span></h1>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:6px;margin-bottom:10px;">
+            <a href="{{ route('language.switch', 'en') }}" style="text-decoration:none;font-size:11px;padding:4px 10px;border-radius:6px;{{ app()->getLocale()=='en' ? 'background:#0e7490;color:#fff;font-weight:600;' : 'background:#f1f5f9;color:#64748b;font-weight:500;' }}">EN</a>
+            <a href="{{ route('language.switch', 'bn') }}" style="text-decoration:none;font-size:11px;padding:4px 10px;border-radius:6px;{{ app()->getLocale()=='bn' ? 'background:#0e7490;color:#fff;font-weight:600;' : 'background:#f1f5f9;color:#64748b;font-weight:500;' }}">বাংলা</a>
         </div>
 
         <hr class="auth-divider">
 
-        {{-- Page content (login form, register form, etc.) --}}
         @yield('auth_content')
 
         <p class="auth-footer">
-            &copy; {{ date('Y') }} PosSales &mdash; Secure Access Only
+            &copy; {{ date('Y') }} {{ config('app.name') }} &mdash; {{ __('Secure Access Only') }}
         </p>
     </div>
 </body>

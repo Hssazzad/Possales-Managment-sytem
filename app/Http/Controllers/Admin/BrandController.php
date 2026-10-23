@@ -15,7 +15,8 @@ class BrandController extends Controller
      */
     public function index()
     {
-        $brands = Brand::orderBy('name')->paginate(20);
+        $brands = Brand::withCount('products')->orderBy('name')->paginate(20);
+
         return view('admin.brands.index', compact('brands'));
     }
 
@@ -36,21 +37,20 @@ class BrandController extends Controller
             'name' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255|unique:brands',
             'description' => 'nullable|string|max:1000',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
-            'is_active' => 'boolean',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:4096',
+            'is_active' => 'sometimes|boolean',
         ]);
 
-        if (empty($validated['slug'])) {
+        if (empty($validated['slug'] ?? '')) {
             $validated['slug'] = Str::slug($validated['name']);
         }
+
+        $validated['slug'] = $this->ensureUniqueSlug($validated['slug']);
 
         $validated['is_active'] = $request->boolean('is_active', true);
 
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imageName = time() . '_' . $image->getClientOriginalName();
-            $image->storeAs('public/brands', $imageName);
-            $validated['image'] = 'brands/' . $imageName;
+            $validated['image'] = $request->file('image')->store('brands', 'public');
         }
 
         Brand::create($validated);
@@ -88,25 +88,24 @@ class BrandController extends Controller
             'name' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255|unique:brands,slug,' . $id,
             'description' => 'nullable|string|max:1000',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
-            'is_active' => 'boolean',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:4096',
+            'is_active' => 'sometimes|boolean',
         ]);
 
-        if (empty($validated['slug'])) {
+        if (empty($validated['slug'] ?? '')) {
             $validated['slug'] = Str::slug($validated['name']);
         }
+
+        $validated['slug'] = $this->ensureUniqueSlug($validated['slug'], (int) $id);
 
         $validated['is_active'] = $request->boolean('is_active', true);
 
         if ($request->hasFile('image')) {
-            if ($brand->image && Storage::exists('public/' . $brand->image)) {
-                Storage::delete('public/' . $brand->image);
+            if ($brand->image) {
+                Storage::disk('public')->delete($brand->image);
             }
 
-            $image = $request->file('image');
-            $imageName = time() . '_' . $image->getClientOriginalName();
-            $image->storeAs('public/brands', $imageName);
-            $validated['image'] = 'brands/' . $imageName;
+            $validated['image'] = $request->file('image')->store('brands', 'public');
         }
 
         $brand->update($validated);
@@ -122,13 +121,32 @@ class BrandController extends Controller
     {
         $brand = Brand::findOrFail($id);
 
-        if ($brand->image && Storage::exists('public/' . $brand->image)) {
-            Storage::delete('public/' . $brand->image);
+        if ($brand->image) {
+            Storage::disk('public')->delete($brand->image);
         }
 
         $brand->delete();
 
         return redirect()->route('brands.index')
             ->with('success', 'Brand deleted successfully!');
+    }
+
+    /**
+     * Avoid duplicate slug when auto-generating from name.
+     */
+    private function ensureUniqueSlug(string $slug, ?int $ignoreId = null): string
+    {
+        $base = $slug !== '' ? $slug : 'brand';
+        $candidate = $base;
+        $n = 1;
+
+        while (Brand::query()
+            ->where('slug', $candidate)
+            ->when($ignoreId !== null, fn ($q) => $q->where('id', '!=', $ignoreId))
+            ->exists()) {
+            $candidate = $base . '-' . $n++;
+        }
+
+        return $candidate;
     }
 }

@@ -36,12 +36,12 @@ class CustomerController extends Controller
             'country' => 'nullable|string|max:100',
         ]);
 
-        Customer::create($validated);
+        $customer = Customer::create($validated);
 
         return response()->json([
             'success' => true,
             'message' => 'Customer created successfully',
-            'customer' => $validated
+            'customer' => $customer
         ]);
     }
 
@@ -59,6 +59,7 @@ class CustomerController extends Controller
                     'name' => $customer->name,
                     'phone' => $customer->phone,
                     'email' => $customer->email,
+                    'address' => $customer->address,
                     'due_amount' => $customer->formatted_due_amount,
                     'display_text' => $customer->name . ' - ' . $customer->phone
                 ];
@@ -96,6 +97,14 @@ class CustomerController extends Controller
         ]);
 
         $customer->update($validated);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Customer updated successfully',
+                'customer' => $customer->fresh()
+            ]);
+        }
 
         return redirect()->route('customers.index')
             ->with('success', 'Customer updated successfully');

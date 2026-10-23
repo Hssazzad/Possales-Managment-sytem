@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -11,10 +10,11 @@ class RoleController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:view-roles')->only(['index']);
-        $this->middleware('permission:create-roles')->only(['create', 'store']);
-        $this->middleware('permission:edit-roles')->only(['edit', 'update']);
-        $this->middleware('permission:delete-roles')->only(['destroy']);
+        // ✅ Fixed: dash notation → dot notation (matches database)
+        $this->middleware('permission:roles.view')->only(['index', 'show']);
+        $this->middleware('permission:roles.create')->only(['create', 'store']);
+        $this->middleware('permission:roles.edit')->only(['edit', 'update']);
+        $this->middleware('permission:roles.delete')->only(['destroy']);
     }
 
     public function index()
@@ -26,7 +26,8 @@ class RoleController extends Controller
     public function create()
     {
         $permissions = Permission::all()->groupBy(function ($permission) {
-            return explode('-', $permission->name)[0];
+            // ✅ Fixed: dot notation grouping
+            return explode('.', $permission->name)[0];
         });
         return view('admin.roles.create', compact('permissions'));
     }
@@ -34,17 +35,17 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:roles',
-            'display_name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'permissions' => 'nullable|array',
+            'name'          => 'required|string|max:255|unique:roles',
+            'display_name'  => 'required|string|max:255',
+            'description'   => 'nullable|string',
+            'permissions'   => 'nullable|array',
             'permissions.*' => 'exists:permissions,id',
         ]);
 
         $role = Role::create([
-            'name' => $request->name,
+            'name'         => $request->name,
             'display_name' => $request->display_name,
-            'description' => $request->description,
+            'description'  => $request->description,
         ]);
 
         if ($request->has('permissions')) {
@@ -56,13 +57,15 @@ class RoleController extends Controller
 
     public function show(Role $role)
     {
+        $role->load('permissions', 'users');
         return view('admin.roles.show', compact('role'));
     }
 
     public function edit(Role $role)
     {
         $permissions = Permission::all()->groupBy(function ($permission) {
-            return explode('-', $permission->name)[0];
+            // ✅ Fixed: dot notation grouping
+            return explode('.', $permission->name)[0];
         });
         $rolePermissions = $role->permissions->pluck('id')->toArray();
         return view('admin.roles.edit', compact('role', 'permissions', 'rolePermissions'));
@@ -71,24 +74,20 @@ class RoleController extends Controller
     public function update(Request $request, Role $role)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name,' . $role->id,
-            'display_name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'permissions' => 'nullable|array',
+            'name'          => 'required|string|max:255|unique:roles,name,' . $role->id,
+            'display_name'  => 'required|string|max:255',
+            'description'   => 'nullable|string',
+            'permissions'   => 'nullable|array',
             'permissions.*' => 'exists:permissions,id',
         ]);
 
         $role->update([
-            'name' => $request->name,
+            'name'         => $request->name,
             'display_name' => $request->display_name,
-            'description' => $request->description,
+            'description'  => $request->description,
         ]);
 
-        if ($request->has('permissions')) {
-            $role->permissions()->sync($request->permissions);
-        } else {
-            $role->permissions()->detach();
-        }
+        $role->permissions()->sync($request->permissions ?? []);
 
         return redirect()->route('roles.index')->with('success', 'Role updated successfully!');
     }

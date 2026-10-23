@@ -1,6 +1,6 @@
 @extends('layouts.auth')
 
-@section('title', 'Login')
+@section('title', __('Login'))
 
 @section('auth_content')
 
@@ -11,12 +11,18 @@
         </div>
     @endif
 
+    @if (session('success'))
+        <div style="background:#dcfce7;color:#15803d;border:1px solid #86efac;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+            <i class="fas fa-check-circle" style="font-size:15px;"></i> {{ session('success') }}
+        </div>
+    @endif
+
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
         {{-- Email --}}
         <div class="pos-field">
-            <label for="email" class="pos-label">Email Address</label>
+            <label for="email" class="pos-label">{{ __('Email Address') }}</label>
             <div class="pos-input-wrap">
                 <svg class="pos-icon" viewBox="0 0 24 24">
                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
@@ -41,7 +47,7 @@
 
         {{-- Password --}}
         <div class="pos-field">
-            <label for="password" class="pos-label">Password</label>
+            <label for="password" class="pos-label">{{ __('Password') }}</label>
             <div class="pos-input-wrap">
                 <svg class="pos-icon" viewBox="0 0 24 24">
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
@@ -69,19 +75,14 @@
                        name="remember"
                        id="remember"
                        {{ old('remember') ? 'checked' : '' }}>
-                Remember me
+                {{ __('Remember Me') }}
             </label>
 
-            @if (Route::has('password.request'))
-                <a href="{{ route('password.request') }}" class="pos-link">
-                    Forgot password?
-                </a>
-            @endif
         </div>
 
         {{-- Submit --}}
         <button type="submit" class="pos-btn">
-            Sign In &rarr;
+            {{ __('Sign In') }} &rarr;
         </button>
     </form>
 

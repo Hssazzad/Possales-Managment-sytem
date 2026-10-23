@@ -6,36 +6,79 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Sale;
+use App\Models\Due;
 use App\Models\IncomeCategory;
 
 class IncomeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Get sales category from database
-        $salesCategory = IncomeCategory::where('name', 'Sales')->where('is_active', true)->first();
-        $categoryName = $salesCategory ? $salesCategory->name : 'Sales';
+        $dateFilter = $request->get('date', today()->toDateString());
 
-        // Get income data from sales table - grouped by date
-        $dailyIncomes = DB::table('sales')
-            ->selectRaw('DATE(created_at) as date, SUM(total_amount) as amount, COUNT(*) as transaction_count')
-            ->where('payment_status', 'paid')
-            ->groupBy('date')
-            ->orderBy('date', 'desc')
+        // 1. Product Sales Income - from sales table (paid_amount > 0)
+        $salesIncome = Sale::whereDate('created_at', $dateFilter)
+            ->where('paid_amount', '>', 0)
+            ->select('id', 'invoice_number', 'paid_amount', 'payment_method', 'customer_name', 'created_at')
             ->get()
-            ->map(function ($item, $index) use ($categoryName) {
+            ->map(function ($sale) {
                 return [
-                    'id' => $index + 1,
-                    'date' => $item->date,
-                    'description' => 'Daily Sales (' . $item->transaction_count . ' transactions)',
-                    'amount' => $item->amount,
-                    'type' => $categoryName
+                    'id' => 'SALE-' . $sale->id,
+                    'date' => $sale->created_at->format('Y-m-d H:i:s'),
+                    'source' => 'Product Sales Income',
+                    'reference' => $sale->invoice_number . ($sale->customer_name ? ' - ' . $sale->customer_name : ''),
+                    'amount' => $sale->paid_amount,
+                    'payment_method' => $sale->payment_method,
+                    'type' => 'sales',
+                    'sale_id' => $sale->id
                 ];
             });
 
-        // You can also add other income sources here in the future
-        // For example: services, fees, etc.
-        return view('admin.income.index', compact('dailyIncomes'));
+        // 2. Due Collection - from dues table (paid dues from customers)
+        $dueCollections = Due::whereDate('paid_date', $dateFilter)
+            ->where('party_type', 'customer')
+            ->where('type', 'paid')
+            ->where('paid_amount', '>', 0)
+            ->select('id', 'title', 'party_name', 'paid_amount', 'payment_method', 'paid_date')
+            ->get()
+            ->map(function ($due) {
+                return [
+                    'id' => 'DUE-' . $due->id,
+                    'date' => $due->paid_date ? $due->paid_date->format('Y-m-d H:i:s') : now()->format('Y-m-d H:i:s'),
+                    'source' => 'Due Collection',
+                    'reference' => $due->party_name . ' - ' . $due->title,
+                    'amount' => $due->paid_amount,
+                    'payment_method' => $due->payment_method ?? 'Cash',
+                    'type' => 'due',
+                    'due_id' => $due->id
+                ];
+            });
+
+        // Combine both income sources
+        $allIncomes = $salesIncome->concat($dueCollections)->sortByDesc('date')->values();
+
+        // Summary Cards Data
+        $todaySalesIncome = Sale::whereDate('created_at', today())->sum('paid_amount');
+        $todayDueCollected = Due::whereDate('paid_date', today())
+            ->where('party_type', 'customer')
+            ->where('type', 'paid')
+            ->sum('paid_amount');
+        $totalCashInHand = $todaySalesIncome + $todayDueCollected;
+
+        // Date filter totals
+        $filteredSalesIncome = $salesIncome->sum('amount');
+        $filteredDueCollected = $dueCollections->sum('amount');
+        $filteredTotal = $filteredSalesIncome + $filteredDueCollected;
+
+        return view('admin.income.index', compact(
+            'allIncomes',
+            'todaySalesIncome',
+            'todayDueCollected',
+            'totalCashInHand',
+            'filteredSalesIncome',
+            'filteredDueCollected',
+            'filteredTotal',
+            'dateFilter'
+        ));
     }
 
     public function categories()
@@ -102,12 +145,20 @@ class IncomeController extends Controller
             'is_active' => 'boolean'
         ]);
 
-        IncomeCategory::create([
+        $category = IncomeCategory::create([
             'name' => $request->name,
             'description' => $request->description,
             'color' => $request->color,
             'is_active' => $request->has('is_active') ? true : false
         ]);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Income category created successfully!',
+                'category' => $category
+            ]);
+        }
 
         return redirect()->route('income.categories')
             ->with('success', 'Income category created successfully!');

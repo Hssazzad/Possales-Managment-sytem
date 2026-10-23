@@ -1,0 +1,10 @@
+<div class="modal fade" id="{{ $modalId }}"><div class="modal-dialog"><div class="modal-content"><form action="{{ $action }}" method="POST">@csrf @if($parent) @method('PUT') @endif
+<div class="modal-header"><h5 class="modal-title">{{ $parent ? 'Edit' : 'Add' }} Main Menu</h5><button type="button" class="close" data-dismiss="modal">&times;</button></div><div class="modal-body">
+<div class="form-group"><label>Parent Code</label><input name="parentcode" type="number" min="1" class="form-control" value="{{ $parent->parentcode ?? old('parentcode') }}" required></div>
+<div class="form-group"><label>Parent Name</label><input name="parentname" class="form-control" value="{{ $parent->parentname ?? old('parentname') }}" required></div>
+<div class="form-group"><label>Controller Name</label><input name="controllername" class="form-control" value="{{ $parent->controllername ?? old('controllername') }}" placeholder="e.g. AccountingController"></div>
+<div class="form-group"><label>Main Route <span class="text-danger">*</span></label><input name="mainroute" class="form-control" value="{{ $parent->mainroute ?? old('mainroute') }}" placeholder="e.g. Accounting" required><small class="text-muted">All submenu URLs use this prefix: Accounting + addGroup = Accounting/addGroup.</small></div>
+<div class="form-group"><label>Icon</label><input name="icon" class="form-control" value="{{ $parent->icon ?? old('icon', 'fas fa-fw fa-folder') }}" required></div>
+<div class="form-group"><label>Position</label><input name="position" type="number" min="1" class="form-control" value="{{ $parent->position ?? old('position', 1) }}" required></div>
+<div class="custom-control custom-switch"><input name="status" value="1" type="checkbox" class="custom-control-input" id="status{{ $modalId }}" {{ !$parent || $parent->status ? 'checked' : '' }}><label class="custom-control-label" for="status{{ $modalId }}">Active</label></div>
+</div><div class="modal-footer"><button class="btn btn-primary">Save</button></div></form></div></div></div>

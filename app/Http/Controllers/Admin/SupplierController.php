@@ -52,7 +52,7 @@ class SupplierController extends Controller
     public function search(Request $request)
     {
         $search = $request->get('search');
-        
+
         $suppliers = Supplier::active()
             ->search($search)
             ->limit(10)
@@ -112,6 +112,14 @@ class SupplierController extends Controller
         ]);
 
         $supplier->update($validated);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Supplier updated successfully',
+                'supplier' => $supplier->fresh()
+            ]);
+        }
 
         return redirect()->route('suppliers.index')
             ->with('success', 'Supplier updated successfully');

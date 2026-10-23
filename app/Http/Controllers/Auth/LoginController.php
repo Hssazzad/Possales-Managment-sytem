@@ -36,4 +36,13 @@ class LoginController extends Controller
         return redirect($this->redirectTo)
             ->with('success', 'Logged In Successfully!');
     }
+
+    /**
+     * Show flash message after logout.
+     */
+    protected function loggedOut(Request $request)
+    {
+        return redirect('/login')
+            ->with('success', 'Logged Out Successfully!');
+    }
 }

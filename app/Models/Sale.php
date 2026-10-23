@@ -14,15 +14,18 @@ class Sale extends Model
         'subtotal',
         'tax_amount',
         'discount_amount',
+        'shipping_charge',
         'total_amount',
         'payment_method',
         'payment_status',
         'paid_amount',
+        'due_amount',
         'change_amount',
         'customer_id',
         'customer_name',
         'customer_phone',
         'notes',
+        'sale_date',
         'user_id',
     ];
 
@@ -30,9 +33,12 @@ class Sale extends Model
         'subtotal' => 'decimal:2',
         'tax_amount' => 'decimal:2',
         'discount_amount' => 'decimal:2',
+        'shipping_charge' => 'decimal:2',
         'total_amount' => 'decimal:2',
         'paid_amount' => 'decimal:2',
+        'due_amount' => 'decimal:2',
         'change_amount' => 'decimal:2',
+        'sale_date' => 'datetime',
     ];
 
     public function user()
@@ -43,36 +49,6 @@ class Sale extends Model
     public function saleItems()
     {
         return $this->hasMany(SaleItem::class);
-    }
-
-    public function getFormattedTotalAttribute()
-    {
-        return '$' . number_format($this->total_amount, 2);
-    }
-
-    public function getFormattedSubtotalAttribute()
-    {
-        return '$' . number_format($this->subtotal, 2);
-    }
-
-    public function getFormattedTaxAmountAttribute()
-    {
-        return '$' . number_format($this->tax_amount, 2);
-    }
-
-    public function getFormattedDiscountAmountAttribute()
-    {
-        return '$' . number_format($this->discount_amount, 2);
-    }
-
-    public function getFormattedPaidAmountAttribute()
-    {
-        return '$' . number_format($this->paid_amount, 2);
-    }
-
-    public function getFormattedChangeAmountAttribute()
-    {
-        return '$' . number_format($this->change_amount, 2);
     }
 
     public function scopeToday($query)
@@ -88,5 +64,94 @@ class Sale extends Model
     public function scopeByStatus($query, $status)
     {
         return $query->where('payment_status', $status);
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
+    public function items()
+    {
+        return $this->hasMany(SaleItem::class);
+    }
+
+    public function getFormattedSubtotalAttribute()
+    {
+        return 'TK '.number_format($this->subtotal, 2);
+    }
+
+    public function getFormattedTaxAmountAttribute()
+    {
+        return 'TK '.number_format($this->tax_amount, 2);
+    }
+
+    public function getFormattedDiscountAmountAttribute()
+    {
+        return 'TK '.number_format($this->discount_amount, 2);
+    }
+
+    public function getFormattedPaidAmountAttribute()
+    {
+        return 'TK '.number_format($this->paid_amount, 2);
+    }
+
+    public function getFormattedChangeAmountAttribute()
+    {
+        return 'TK '.number_format($this->change_amount, 2);
+    }
+
+    public function getFormattedDueAmountAttribute()
+    {
+        return 'TK '.number_format($this->due_amount, 2);
+    }
+
+    public function getFormattedShippingChargeAttribute()
+    {
+        return 'TK '.number_format($this->shipping_charge, 2);
+    }
+
+    public function getTotalItemsAttribute()
+    {
+        return $this->items->sum('quantity');
+    }
+
+    public function getProfitAttribute()
+    {
+        $totalCost = $this->items->sum(function ($item) {
+            $product = $item->product;
+
+            return $product ? ($product->purchase_price * $item->quantity) : 0;
+        });
+
+        return $this->total_amount - $totalCost;
+    }
+
+    public function getFormattedProfitAttribute()
+    {
+        return 'TK '.number_format($this->profit, 2);
+    }
+
+    public function scopeThisMonth($query)
+    {
+        return $query->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year);
+    }
+
+    public function scopeThisYear($query)
+    {
+        return $query->whereYear('created_at', now()->year);
+    }
+
+    public function scopeByDateRange($query, $startDate, $endDate)
+    {
+        return $query->whereDate('created_at', '>=', $startDate)
+            ->whereDate('created_at', '<=', $endDate);
+    }
+
+    public function scopeOverdue($query)
+    {
+        return $query->where('payment_status', '!=', 'paid')
+            ->where('due_amount', '>', 0);
     }
 }

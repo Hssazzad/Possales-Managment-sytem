@@ -1,225 +1,198 @@
 @extends('adminlte::page')
 
-@section('title', 'New Return | PosSales')
+@section('title', 'New Sale Return | PosSales')
 
-@section('content_header')
-<div class="d-flex justify-content-between align-items-center">
-    <h1 style="font-size:1.3rem; font-weight:600; color:#000000;">
-        <i class="fas fa-undo mr-2" style="color:#000000;"></i> New Return
-    </h1>
-    <div>
-        <a href="{{ route('returns.index') }}" class="btn btn-secondary btn-sm" style="background:#ffffff; color:#000000; border:2px solid #333333;">
-            <i class="fas fa-arrow-left mr-1"></i> Back to Returns
-        </a>
-    </div>
-</div>
+@section('adminlte_css')
+    <link rel="stylesheet" href="{{ asset('css/custom-list.css') }}">
 @stop
 
 @section('content')
-<div class="row">
-    <div class="col-md-8">
-        <div class="card" style="background:#ffffff; border:2px solid #333333; border-radius:4px;">
-            <div class="card-header" style="background:#f5f5f5; border-bottom:2px solid #333333; padding:16px;">
-                <h5 style="margin:0; font-weight:600; color:#000000;">
-                    <i class="fas fa-undo mr-2" style="color:#000000;"></i>
-                    Return Information
-                </h5>
-            </div>
-            <div class="card-body" style="padding:20px;">
-                <form method="POST" action="{{ route('returns.store') }}">
-                    @csrf
+<div class="pt-4">
+    <div class="list-container">
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="sale_id" class="form-label" style="color:#000000; font-weight:600;">Sale Invoice *</label>
-                                <select class="form-control" id="sale_id" name="sale_id" required style="border:2px solid #333333; background:#ffffff; color:#000000;">
-                                    <option value="">Select Sale Invoice</option>
-                                    <!-- Sales will be loaded here -->
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="customer_id" class="form-label" style="color:#000000; font-weight:600;">Customer</label>
-                                <select class="form-control" id="customer_id" name="customer_id" style="border:2px solid #333333; background:#ffffff; color:#000000;">
-                                    <option value="">Select Customer (Optional)</option>
-                                    <!-- Customers will be loaded here -->
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="product_id" class="form-label" style="color:#000000; font-weight:600;">Product *</label>
-                                <select class="form-control" id="product_id" name="product_id" required style="border:2px solid #333333; background:#ffffff; color:#000000;">
-                                    <option value="">Select Product</option>
-                                    <!-- Products will be loaded here -->
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="quantity" class="form-label" style="color:#000000; font-weight:600;">Quantity *</label>
-                                <input type="number" class="form-control" id="quantity" name="quantity" min="1" value="1" required>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="refund_amount" class="form-label" style="color:#000000; font-weight:600;">Refund Amount *</label>
-                                <input type="number" class="form-control" id="refund_amount" name="refund_amount" step="0.01" min="0" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="refund_method" class="form-label" style="color:#000000; font-weight:600;">Refund Method *</label>
-                                <select class="form-control" id="refund_method" name="refund_method" required>
-                                    <option value="cash">Cash</option>
-                                    <option value="card">Card</option>
-                                    <option value="bank">Bank Transfer</option>
-                                    <option value="credit">Store Credit</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="reason" class="form-label" style="color:#000000; font-weight:600;">Return Reason *</label>
-                        <textarea class="form-control" id="reason" name="reason" rows="3" placeholder="Enter the reason for return" required></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="notes" class="form-label" style="color:#000000; font-weight:600;">Additional Notes</label>
-                        <textarea class="form-control" id="notes" name="notes" rows="2" placeholder="Enter any additional notes"></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save mr-2"></i> Save Return
-                        </button>
-                        <a href="{{ route('returns.index') }}" class="btn btn-secondary ml-2">
-                            <i class="fas fa-times mr-2"></i> Cancel
-                        </a>
-                    </div>
-                </form>
+        <!-- Top Toolbar -->
+        <div class="top-toolbar">
+            <h5 class="mb-0 font-weight-bold">
+                <i class="fas fa-undo mr-2 text-warning"></i> New Sale Return
+                @if($sale)
+                    <small class="text-muted">— {{ $sale->invoice_number }}</small>
+                @endif
+            </h5>
+            <div class="action-buttons">
+                <a href="{{ route('sales.index') }}" class="btn-export">
+                    <i class="fas fa-arrow-left mr-1"></i> Back to Sales
+                </a>
+                <a href="{{ route('returns.index') }}" class="btn-export">
+                    <i class="fas fa-list mr-1"></i> Return List
+                </a>
             </div>
         </div>
-    </div>
 
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 style="margin:0; font-weight:600;">
-                    <i class="fas fa-info-circle mr-2" style="color:#17a2b8;"></i>
-                    Return Guidelines
-                </h5>
+        @if($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Please fix these errors:</strong>
+                <ul class="mb-0 mt-2 pl-3">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
             </div>
-            <div class="card-body">
-                <div class="alert alert-info">
-                    <h6><i class="fas fa-info-circle mr-2"></i> Quick Tips</h6>
-                    <ul class="mb-0">
-                        <li>Select the original sale invoice</li>
-                        <li>Choose the product being returned</li>
-                        <li>Enter the correct quantity</li>
-                        <li>Specify refund amount accurately</li>
-                        <li>Provide clear return reason</li>
-                    </ul>
-                </div>
-                <div class="alert alert-warning">
-                    <h6><i class="fas fa-exclamation-triangle mr-2"></i> Important</h6>
-                    <p class="mb-0">Returns will be processed after approval. Make sure all details are accurate before submitting.</p>
-                </div>
+        @endif
+
+        @if(!$sale)
+            <div class="alert alert-warning">
+                No sale selected. Enter a Sale ID to start a return.
             </div>
-        </div>
+            <form method="GET" action="{{ route('returns.create') }}" class="form-inline" style="gap:10px;">
+                <input type="number" name="sale_id" class="form-control" placeholder="Sale ID" min="1" required>
+                <button type="submit" class="btn-add-new">
+                    <i class="fas fa-search mr-1"></i> Load Sale
+                </button>
+            </form>
+        @else
+            <!-- Sale Summary -->
+            <div class="d-flex flex-wrap mb-3" style="gap:0.75rem;">
+                <span class="badge badge-light border" style="font-size:13px;padding:8px 14px;">
+                    Invoice: <strong class="text-primary">{{ $sale->invoice_number }}</strong>
+                </span>
+                <span class="badge badge-light border" style="font-size:13px;padding:8px 14px;">
+                    Date: <strong>{{ $sale->created_at->format('d M Y, h:i A') }}</strong>
+                </span>
+                <span class="badge badge-light border" style="font-size:13px;padding:8px 14px;">
+                    Customer: <strong>{{ $sale->customer_name ?: ($sale->customer?->name ?: 'Walk-in') }}</strong>
+                </span>
+                <span class="badge badge-light border" style="font-size:13px;padding:8px 14px;">
+                    Total: <strong>৳{{ number_format($sale->total_amount, 2) }}</strong>
+                </span>
+            </div>
+
+            <form method="POST" action="{{ route('returns.store') }}">
+                @csrf
+                <input type="hidden" name="sale_id" value="{{ $sale->id }}">
+                <input type="hidden" name="customer_id" value="{{ $sale->customer_id }}">
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Product <span class="text-danger">*</span></label>
+                            <select name="product_id" id="return_product" class="form-control" required>
+                                <option value="">Select product from this sale</option>
+                                @foreach($sale->items as $item)
+                                    <option value="{{ $item->product_id }}"
+                                        data-qty="{{ (int) $item->quantity }}"
+                                        data-price="{{ (float) $item->unit_price }}"
+                                        {{ old('product_id') == $item->product_id ? 'selected' : '' }}>
+                                        {{ $item->product_name ?: ($item->product?->name ?: 'Product') }}
+                                        (Sold: {{ (int) $item->quantity }} × ৳{{ number_format($item->unit_price, 2) }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Quantity <span class="text-danger">*</span></label>
+                            <input type="number" name="quantity" id="return_qty" class="form-control"
+                                min="1" value="{{ old('quantity', 1) }}" required>
+                            <small class="text-muted" id="qty_hint"></small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Reason <span class="text-danger">*</span></label>
+                            <input type="text" name="reason" class="form-control" list="return_reasons"
+                                value="{{ old('reason') }}" placeholder="e.g. Defective item" maxlength="500" required>
+                            <datalist id="return_reasons">
+                                <option value="Defective item"></option>
+                                <option value="Wrong item delivered"></option>
+                                <option value="Customer changed mind"></option>
+                                <option value="Damaged during delivery"></option>
+                            </datalist>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Refund Amount <span class="text-danger">*</span></label>
+                            <input type="number" name="refund_amount" id="refund_amount" class="form-control"
+                                min="0" step="0.01" value="{{ old('refund_amount') }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>Refund Method <span class="text-danger">*</span></label>
+                            <select name="refund_method" class="form-control" required>
+                                @foreach(['cash', 'card', 'bank', 'credit'] as $method)
+                                    <option value="{{ $method }}"
+                                        {{ old('refund_method', $sale->payment_method) === $method ? 'selected' : '' }}>
+                                        {{ ucfirst($method) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea name="notes" class="form-control" rows="2" maxlength="1000"
+                        placeholder="Optional note">{{ old('notes') }}</textarea>
+                </div>
+
+                <div class="text-right">
+                    <a href="{{ route('sales.index') }}" class="btn btn-default mr-2">Cancel</a>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save mr-1"></i> Save Return
+                    </button>
+                </div>
+            </form>
+        @endif
+
     </div>
 </div>
 @stop
 
 @section('adminlte_js')
+@if($sale)
 <script>
-// Load data for dropdowns
-document.addEventListener('DOMContentLoaded', function() {
-    // Load sales
-    fetch('/admin/sales/search')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            const select = document.getElementById('sale_id');
-            // Clear existing options except the first one
-            while (select.options.length > 1) {
-                select.remove(1);
-            }
-            if (data && data.length > 0) {
-                data.forEach(sale => {
-                    const option = document.createElement('option');
-                    option.value = sale.id;
-                    option.textContent = sale.display_text || sale.invoice_number || 'Sale #' + sale.id;
-                    select.appendChild(option);
-                });
-            } else {
-                const option = document.createElement('option');
-                option.value = "";
-                option.textContent = "No sales found";
-                option.disabled = true;
-                select.appendChild(option);
-            }
-        })
-        .catch(error => {
-            console.error('Error loading sales:', error);
-            const select = document.getElementById('sale_id');
-            const option = document.createElement('option');
-            option.value = "";
-            option.textContent = "Error loading sales";
-            option.disabled = true;
-            select.appendChild(option);
-        });
+(function () {
+    var productSelect = document.getElementById('return_product');
+    var qtyInput = document.getElementById('return_qty');
+    var refundInput = document.getElementById('refund_amount');
+    var qtyHint = document.getElementById('qty_hint');
 
-    // Load customers
-    fetch('/admin/customers/search')
-        .then(response => response.json())
-        .then(data => {
-            const select = document.getElementById('customer_id');
-            data.forEach(customer => {
-                const option = document.createElement('option');
-                option.value = customer.id;
-                option.textContent = customer.display_text;
-                select.appendChild(option);
-            });
-        })
-        .catch(error => console.error('Error loading customers:', error));
+    function selectedOption() {
+        return productSelect.options[productSelect.selectedIndex];
+    }
 
-    // Load products
-    fetch('/admin/products/search')
-        .then(response => response.json())
-        .then(data => {
-            const select = document.getElementById('product_id');
-            data.forEach(product => {
-                const option = document.createElement('option');
-                option.value = product.id;
-                option.textContent = product.name;
-                select.appendChild(option);
-            });
-        })
-        .catch(error => console.error('Error loading products:', error));
-});
+    function recalc(fromQty) {
+        var opt = selectedOption();
+        if (!opt || !opt.value) {
+            qtyHint.textContent = '';
+            return;
+        }
+        var maxQty = parseInt(opt.dataset.qty) || 1;
+        var price = parseFloat(opt.dataset.price) || 0;
+
+        var qty = parseInt(qtyInput.value) || 0;
+        if (qty < 1) qty = 1;
+        if (qty > maxQty) qty = maxQty;
+        qtyInput.value = qty;
+        qtyInput.max = maxQty;
+        qtyHint.textContent = 'Max returnable: ' + maxQty;
+
+        if (!fromQty || !refundInput.value) {
+            refundInput.value = (qty * price).toFixed(2);
+        }
+    }
+
+    productSelect.addEventListener('change', function () { recalc(false); });
+    qtyInput.addEventListener('input', function () { recalc(true); });
+    recalc(false);
+})();
 </script>
-@stop
-
-@section('adminlte_css')
-<style>
-body { background: #ffffff !important; }
-.form-control:focus { border-color: #000000 !important; box-shadow: none !important; }
-.btn:hover { background: #f5f5f5 !important; border-color: #000000 !important; }
-.form-group { margin-bottom: 1rem; }
-.alert { margin-bottom: 1rem; }
-</style>
+@endif
 @stop
