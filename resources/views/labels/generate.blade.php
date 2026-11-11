@@ -340,11 +340,8 @@
             }
             $prodName = !empty($item['name']) ? $item['name'] : 'PANT';
             $catName = $item['category'] ?? '';
-            $unitCode = $item['unit_code'] ?? $item['code'] ?? $item['sku'] ?? '';
             $productCode = $item['product_code'] ?? '';
-            // Bars + number = 9-number PRODUCT barcode (BB250000001) — same per product, change hobe na.
-            // Art (upore) unit er product_code → serial-wise unique.
-            $barcodeVal = ($item['scan_value'] ?? '') ?: ($item['barcode'] ?? '') ?: $unitCode;
+            $barcodeVal = ($item['scan_value'] ?? '') ?: ($item['barcode'] ?? '') ?: $productCode;
             // Header = Brand name (na thakle category), middle = Product name.
             $brandOnly = trim((string) ($item['brand'] ?? ''));
             $headerText = $brandOnly !== '' ? $brandOnly : (trim((string) $catName) !== '' ? $catName : $prodName);

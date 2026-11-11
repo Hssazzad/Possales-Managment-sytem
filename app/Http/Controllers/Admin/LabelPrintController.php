@@ -243,7 +243,6 @@ class LabelPrintController extends Controller
                         'price'       => $fallbackPrice,
                         'sale_price'  => $fallbackPrice,
                         'code'        => $fallbackCode,
-                        'unit_code'   => $fallbackCode,
                         'product_code' => $fallbackCode,
                     ];
                 }
@@ -255,7 +254,7 @@ class LabelPrintController extends Controller
             for ($i = 0; $i < $quantity; $i++) {
                 $unit = $availableUnits->get($i);
                 $unitProduct = $unit->product ?: $product;
-                $unitCode = $unit->unit_code ?: $unit->product_code;
+                $productCode = $unitProduct->code ?? $unitProduct->sku ?? '';
                 $barcode = $unitProduct->barcode;
                 // Sell price: this unit's variation price first, then the
                 // product's sale_price (the legacy price column may be stale).
@@ -274,16 +273,14 @@ class LabelPrintController extends Controller
                     'variation'   => $variation?->variation_value,
                     'color'       => $unitColor,
                     'size'        => $unitSize,
-                    'sku'         => $unitCode,
+                    'sku'         => $productCode,
                     'barcode'     => $barcode,
                     'scan_value'  => $barcode,
                     'scan_format' => 'C128',
                     'price'       => $unitPrice,
                     'sale_price'  => $unitPrice,
-                    'code'        => $unitCode,
-                    'unit_code'   => $unitCode,
-                    // Unit's own product_code first → Art unique per serial.
-                    'product_code' => $unit->product_code ?? $product->code ?? $product->sku ?? '',
+                    'code'        => $productCode,
+                    'product_code' => $productCode,
                 ];
             }
         }

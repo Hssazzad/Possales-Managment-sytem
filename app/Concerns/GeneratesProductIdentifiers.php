@@ -41,14 +41,13 @@ trait GeneratesProductIdentifiers
 
     /**
      * Format barcode from sequence number N:
-     * N = 1   => BB250000001
-     * N = 12  => BB250000012
-     * N = 100 => BB250000100
+     * N = 1   => BB01
+     * N = 12  => BB12
+     * N = 100 => BB100
      */
     protected function formatBarcode(int $sequence): string
     {
-        $number = $this->barcodeBase + $sequence;
-        return $this->barcodePrefix . $number;
+        return $this->formatProductCode($sequence);
     }
 
     /**

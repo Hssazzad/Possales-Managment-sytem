@@ -278,7 +278,6 @@
                                 $detailRows = $allUnits->map(function ($unit) use ($product) {
                                     return (object) [
                                         'variation' => $unit->variation?->variation_value ?? '—',
-                                        'code' => $unit->unit_code ?? $unit->product_code ?? '—',
                                         'barcode' => $product->barcode ?? '—',
                                         'status' => ucfirst((string) ($unit->status ?? 'available')),
                                     ];
@@ -288,7 +287,6 @@
                                 $detailRows = $variations->map(function ($var) {
                                     return (object) [
                                         'variation' => $var->variation_value ?? 'Default',
-                                        'code' => $var->product_code ?? '—',
                                         'barcode' => $var->barcode ?? '—',
                                         'status' => ((int) ($var->stock ?? 0)) > 0 ? 'In stock' : 'Out of stock',
                                     ];
@@ -356,13 +354,12 @@
                             <td colspan="8">
                                 <table class="px-mini">
                                     <thead>
-                                        <tr><th scope="col">Variation</th><th scope="col">Product Code</th><th scope="col">Barcode</th><th scope="col">Status</th></tr>
+                                        <tr><th scope="col">Variation</th><th scope="col">Barcode</th><th scope="col">Status</th></tr>
                                     </thead>
                                     <tbody>
                                         @foreach($detailRows as $d)
                                         <tr>
                                             <td>{{ $d->variation }}</td>
-                                            <td class="mono">{{ $d->code }}</td>
                                             <td class="mono">{{ $d->barcode }}</td>
                                             <td>{{ $d->status }}</td>
                                         </tr>

@@ -19,6 +19,7 @@ use App\Http\Controllers\SupplierDueReportController;
 use App\Http\Controllers\TransactionHistoryReportController;
 use App\Http\Controllers\VatReportController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 
@@ -83,6 +84,24 @@ Route::middleware(['auth'])->group(function () {
     // Loss/Profit Reports
     Route::get('/loss-profit-reports', [LossProfitReportController::class, 'index'])->name('loss-profit-reports.index');
 
+});
+
+// Maintenance actions are intentionally limited to the super admin.
+Route::middleware(['auth'])->prefix('system')->group(function () {
+    Route::get('/clear-cache', function () {
+        abort_unless(auth()->user()->isSuperAdmin(), 403);
+
+        return view('admin.system.clear-cache');
+    })->name('system.clear-cache');
+
+    Route::post('/clear-cache', function () {
+        abort_unless(auth()->user()->isSuperAdmin(), 403);
+
+        Artisan::call('deployment:clear-cache');
+
+        return redirect()->route('system.clear-cache')
+            ->with('success', 'System cache cleared successfully.');
+    })->name('system.clear-cache.run');
 });
 
 // Language switching

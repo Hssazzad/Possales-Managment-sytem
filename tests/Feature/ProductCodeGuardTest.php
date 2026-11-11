@@ -67,7 +67,7 @@ test('create assigns the next sequential code and ignores a submitted barcode', 
 
     expect($created)->not->toBeNull();
     expect($created->code)->toBe('BB02');
-    expect($created->barcode)->toBe('BB250000002');
+    expect($created->barcode)->toBe('BB02');
 });
 
 test('create still works when no code is submitted at all', function () {

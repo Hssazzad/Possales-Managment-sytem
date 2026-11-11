@@ -56,7 +56,7 @@ test('product codes fill the lowest free gap starting from BB01', function () {
     sequenceProduct('BB01', 'BB250000001');
 
     expect($probe->nextProductCode())->toBe('BB02');
-    expect($probe->nextBarcode())->toBe('BB250000002');
+    expect($probe->nextBarcode())->toBe('BB02');
 
     // Pre-existing out-of-order codes (BB13, BB15) must not stop gap filling.
     sequenceProduct('BB13', 'BB250000013');
@@ -111,5 +111,5 @@ test('generated code and barcode always share the same sequence', function () {
     $pair = ['code' => $probe->nextProductCode(), 'barcode' => $probe->nextBarcode()];
 
     expect($pair['code'])->toBe('BB02');
-    expect($pair['barcode'])->toBe('BB250000002');
+    expect($pair['barcode'])->toBe('BB02');
 });

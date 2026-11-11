@@ -430,7 +430,7 @@ class ProductController extends Controller
 
     public function edit(int $id): View
     {
-        $product    = Product::with(['productVariations', 'supplier'])->findOrFail($id);
+        $product    = Product::with(['productVariations', 'stocks.color', 'stocks.size', 'supplier', 'color', 'size'])->findOrFail($id);
         $brands     = Brand::where('is_active', true)->orderBy('name')->get();
         $categories = Category::where('is_active', true)->orderBy('name')->get();
         $units      = Unit::where('is_active', true)->orderBy('name')->get();
@@ -622,10 +622,6 @@ class ProductController extends Controller
                 $product->update([
                     'color_id'       => !empty($firstStock['color_id']) ? $firstStock['color_id'] : null,
                     'size_id'        => !empty($firstStock['size_id'])  ? $firstStock['size_id']  : null,
-                    'purchase_price' => !empty($firstStock['purchase_price']) ? (float) $firstStock['purchase_price'] : ($product->purchase_price ?? 0),
-                    'sale_price'     => !empty($firstStock['sell_price'])     ? (float) $firstStock['sell_price']     : ($product->sale_price ?? 0),
-                    'price'          => !empty($firstStock['sell_price'])     ? (float) $firstStock['sell_price']     : ($product->price ?? 0),
-                    'cost'           => !empty($firstStock['purchase_price']) ? (float) $firstStock['purchase_price'] : ($product->cost ?? 0),
                 ]);
             }
         }
@@ -1224,9 +1220,6 @@ class ProductController extends Controller
             $variation->id
         );
 
-        foreach ($newUnits as $unit) {
-            $usedCodes[] = $unit->unit_code;
-        }
     }
 
     private function resolveVariationProductCode(ProductVariation $variation, array $exclude = []): string

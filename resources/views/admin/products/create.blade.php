@@ -19,6 +19,7 @@
     .variation-table { font-size:0.875rem; }
     .variation-table th { background:#f8f9fa; border-bottom:2px solid #dee2e6; white-space:nowrap; }
     .variation-table td { vertical-align:middle; }
+    .variation-barcode { font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:.78rem; letter-spacing:.03em; white-space:nowrap; }
     .btn-remove-var { color:#dc3545; background:transparent; border:none; cursor:pointer; }
     .btn-remove-var:hover { color:#bd2130; }
     .card-outline.card-navy .card-header { background:linear-gradient(135deg, #001f3f, #003366); color:#fff; }
@@ -74,7 +75,7 @@
         @csrf
         <input type="hidden" name="purchase_price" id="product_purchase_price" value="">
         <input type="hidden" name="sale_price" id="product_sale_price" value="">
-        <input type="hidden" name="barcode" id="product_barcode" value="{{ old('barcode', $nextBarcode) }}">
+        <input type="hidden" name="barcode" id="product_barcode" value="{{ old('barcode', $nextBarcode ?? 'BB250000001') }}">
 
         <div class="row">
             {{-- Main Column --}}
@@ -230,13 +231,14 @@
                                         <th>Size</th>
                                         <th>Buy Price</th>
                                         <th>Sell Price</th>
+                                        <th>Barcode</th>
                                         <th width="100">Stock</th>
                                         <th width="50" class="text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="variationBody">
                                     <tr id="emptyVariation">
-                                        <td colspan="6" class="text-center text-muted py-3">No variations added yet.</td>
+                                        <td colspan="7" class="text-center text-muted py-3">No variations added yet.</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -350,24 +352,6 @@ $(document).ready(function () {
         $('#total_stock_display').val(totalStock);
     }
 
-    function cleanBarcode(value) {
-        return String(value || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-    }
-
-    function nextVariationBarcode() {
-        const productBarcode = cleanBarcode($('#product_barcode').val());
-        const matches = productBarcode.match(/^([A-Z]+)(\d+)$/);
-        if (!matches) return productBarcode;
-        const prefix = matches[1];
-        const numberPart = matches[2];
-        const nextNumber = String(parseInt(numberPart, 10) + variationIndex + 1);
-        return prefix + nextNumber.padStart(numberPart.length, '0');
-    }
-
-    function isValidScanBarcode(barcode) {
-        return cleanBarcode(barcode).length === 11;
-    }
-
     $('#addVariation').on('click', function() {
         const purchasePrice = currentPurchasePrice;
         const sellPrice = currentSellPrice;
@@ -376,8 +360,6 @@ $(document).ready(function () {
         const sizeId = $('#v_size').val();
         const sizeName = $('#v_size option:selected').text();
         const stock = parseInt($('#v_stock').val()) || 0;
-        const variationBarcode = nextVariationBarcode();
-
         if (purchasePrice <= 0) { alert('Please enter Purchase Price.'); return; }
         if (sellPrice <= 0) { alert('Please enter Selling Price.'); return; }
         if (!colorId && !sizeId) { alert('Please select at least a Color or a Size.'); return; }
@@ -392,15 +374,6 @@ $(document).ready(function () {
         });
         if (isDuplicate) { alert('This Color + Size combination already exists!'); return; }
 
-        var isBarcodeDuplicate = false;
-        $('#variationBody tr:not(#emptyVariation)').each(function() {
-            if (cleanBarcode($(this).find('input[name*="[barcode]"]').val()) === variationBarcode) {
-                isBarcodeDuplicate = true; return false;
-            }
-        });
-        if (isBarcodeDuplicate) { alert('This variation barcode already exists!'); return; }
-        if (!isValidScanBarcode(variationBarcode)) { alert('Scan barcode must be 11 characters (e.g. BB250000001).'); return; }
-
         $('#emptyVariation').hide();
 
         const rowHtml = `
@@ -409,8 +382,8 @@ $(document).ready(function () {
                 <td>${sizeId ? sizeName : '-'}<input type="hidden" name="stocks[${variationIndex}][size_id]" value="${sizeId}"></td>
                 <td>${purchasePrice.toFixed(2)} BDT<input type="hidden" name="stocks[${variationIndex}][purchase_price]" value="${purchasePrice}"></td>
                 <td style="color:#155724; font-weight:700;">${sellPrice.toFixed(2)} BDT<input type="hidden" name="stocks[${variationIndex}][sell_price]" value="${sellPrice}"></td>
-                <td><input type="hidden" name="stocks[${variationIndex}][barcode]" value="${variationBarcode}">
-                    <input type="number" name="stocks[${variationIndex}][quantity]" value="${stock}"
+                <td class="variation-barcode"><input type="hidden" name="stocks[${variationIndex}][barcode]" value="">Generated on save</td>
+                <td><input type="number" name="stocks[${variationIndex}][quantity]" value="${stock}"
                            class="form-control form-control-sm variation-stock-input" min="0" style="height:26px;">
                 </td>
                 <td class="text-center">
@@ -442,10 +415,6 @@ $(document).ready(function () {
 
     $(document).on('input', '.variation-stock-input', calculateTotals);
 
-    $(document).on('blur', 'input[name*="[barcode]"]', function() {
-        $(this).val(cleanBarcode($(this).val()));
-    });
-
     $('#productCreateForm').on('submit', function(e) {
         const rows = $('#variationBody tr:not(#emptyVariation)');
         // NOTE: required-field checks live here (not HTML5 `required`) because
@@ -457,16 +426,6 @@ $(document).ready(function () {
         if (!$('#unit_id').val()) { e.preventDefault(); alert('Please select a base unit.'); $('#unit_id').select2('open'); return; }
         if (rows.length === 0) { e.preventDefault(); alert('Please add at least one variation.'); return; }
 
-        const seenBarcodes = {};
-        let hasBarcodeProblem = false;
-        rows.each(function() {
-            const barcodeInput = $(this).find('input[name*="[barcode]"]');
-            const barcode = cleanBarcode(barcodeInput.val());
-            barcodeInput.val(barcode);
-            if (!isValidScanBarcode(barcode) || seenBarcodes[barcode]) { hasBarcodeProblem = true; return false; }
-            seenBarcodes[barcode] = true;
-        });
-        if (hasBarcodeProblem) { e.preventDefault(); alert('Every variation needs a unique 11-character scan barcode.'); return; }
     });
 
     $('#imageInput').on('change', function () {

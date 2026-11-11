@@ -316,60 +316,93 @@
                                     </tr>
                                 </thead>
                                 <tbody id="variationBody">
-                                    @forelse($product->stocks as $i => $stock)
-                                        @php
-                                            $matched = $product->productVariations->firstWhere('variation_value', implode(' - ', array_filter([$stock->color?->name ?? null, $stock->size?->name ?? null]))) ?: $product->productVariations->get($i);
-                                        @endphp
+                                    @php
+                                        $colorIdsByName = $colors->mapWithKeys(fn ($color) => [mb_strtolower(trim((string) $color->name)) => $color->id]);
+                                        $sizeIdsByName = $sizes->mapWithKeys(fn ($size) => [mb_strtolower(trim((string) $size->name)) => $size->id]);
+                                        $variationRows = [];
+                                        $usedVariationIds = [];
+                                        $rowIndex = 0;
+
+                                        foreach ($product->stocks as $i => $stock) {
+                                            $stockValue = implode(' - ', array_filter([$stock->color?->name ?? null, $stock->size?->name ?? null]));
+                                            $matched = $product->productVariations->firstWhere('variation_value', $stockValue) ?: $product->productVariations->get($i);
+                                            if ($matched) {
+                                                $usedVariationIds[$matched->id] = true;
+                                            }
+                                            $variationRows[] = [
+                                                'index' => $rowIndex++,
+                                                'color_name' => $stock->color?->name ?? '—',
+                                                'size_name' => $stock->size?->name ?? '—',
+                                                'color_id' => $stock->color_id,
+                                                'size_id' => $stock->size_id,
+                                                'purchase_price' => $matched?->purchase_price ?? $product->purchase_price ?? $product->cost,
+                                                'sell_price' => $matched?->price ?? $product->sale_price ?? $product->price,
+                                                'barcode' => $matched?->barcode ?? '',
+                                                'quantity' => $stock->quantity,
+                                            ];
+                                        }
+
+                                        foreach ($product->productVariations as $variation) {
+                                            if (isset($usedVariationIds[$variation->id])) {
+                                                continue;
+                                            }
+
+                                            $parts = array_values(array_filter(
+                                                array_map('trim', explode(' - ', (string) $variation->variation_value)),
+                                                fn ($part) => $part !== '' && strcasecmp($part, 'Default') !== 0
+                                            ));
+                                            $colorName = null;
+                                            $sizeName = null;
+                                            if (count($parts) >= 2) {
+                                                [$colorName, $sizeName] = [$parts[0], $parts[1]];
+                                            } elseif (count($parts) === 1) {
+                                                $partKey = mb_strtolower($parts[0]);
+                                                if ($colorIdsByName->has($partKey)) {
+                                                    $colorName = $parts[0];
+                                                } elseif ($sizeIdsByName->has($partKey)) {
+                                                    $sizeName = $parts[0];
+                                                }
+                                            }
+
+                                            $usedVariationIds[$variation->id] = true;
+                                            $variationRows[] = [
+                                                'index' => $rowIndex++,
+                                                'color_name' => $colorName ?? '—',
+                                                'size_name' => $sizeName ?? '—',
+                                                'color_id' => $colorName !== null ? $colorIdsByName->get(mb_strtolower($colorName)) : null,
+                                                'size_id' => $sizeName !== null ? $sizeIdsByName->get(mb_strtolower($sizeName)) : null,
+                                                'purchase_price' => $variation->purchase_price ?? $product->purchase_price ?? $product->cost,
+                                                'sell_price' => $variation->price ?? $product->sale_price ?? $product->price,
+                                                'barcode' => $variation->barcode ?? '',
+                                                'quantity' => $variation->stock,
+                                            ];
+                                        }
+                                    @endphp
+                                    @foreach($variationRows as $row)
                                         <tr>
                                             <td>
-                                                {{ $stock->color?->name ?? '—' }}
-                                                <input type="hidden" name="stocks[{{ $i }}][color_id]" value="{{ $stock->color_id }}">
+                                                {{ $row['color_name'] }}
+                                                <input type="hidden" name="stocks[{{ $row['index'] }}][color_id]" value="{{ $row['color_id'] }}">
                                             </td>
                                             <td>
-                                                {{ $stock->size?->name ?? '—' }}
-                                                <input type="hidden" name="stocks[{{ $i }}][size_id]" value="{{ $stock->size_id }}">
+                                                {{ $row['size_name'] }}
+                                                <input type="hidden" name="stocks[{{ $row['index'] }}][size_id]" value="{{ $row['size_id'] }}">
                                             </td>
                                             <td>
-                                                <input type="number" step="0.01" min="0" name="stocks[{{ $i }}][purchase_price]" class="form-control form-control-sm input-purchase" value="{{ $matched?->purchase_price ?? $product->purchase_price ?? $product->cost }}">
+                                                <input type="number" step="0.01" min="0" name="stocks[{{ $row['index'] }}][purchase_price]" class="form-control form-control-sm input-purchase" value="{{ $row['purchase_price'] }}">
                                             </td>
                                             <td>
-                                                <input type="number" step="0.01" min="0" name="stocks[{{ $i }}][sell_price]" class="form-control form-control-sm input-sell" value="{{ $matched?->price ?? $product->sale_price ?? $product->price }}">
+                                                <input type="number" step="0.01" min="0" name="stocks[{{ $row['index'] }}][sell_price]" class="form-control form-control-sm input-sell" value="{{ $row['sell_price'] }}">
                                             </td>
                                             <td>
-                                                <input type="hidden" name="stocks[{{ $i }}][barcode]" value="{{ $matched?->barcode ?? '' }}">
-                                                <input type="number" name="stocks[{{ $i }}][quantity]" value="{{ $stock->quantity }}" class="form-control form-control-sm variation-stock-input" min="0">
+                                                <input type="hidden" name="stocks[{{ $row['index'] }}][barcode]" value="{{ $row['barcode'] }}">
+                                                <input type="number" name="stocks[{{ $row['index'] }}][quantity]" value="{{ $row['quantity'] }}" class="form-control form-control-sm variation-stock-input" min="0">
                                             </td>
                                             <td class="text-center">
                                                 <button type="button" class="btn-remove-var remove-variation"><i class="fas fa-trash"></i></button>
                                             </td>
                                         </tr>
-                                    @empty
-                                        @foreach($product->productVariations as $i => $variation)
-                                        <tr>
-                                            <td>
-                                                {{ $product->color?->name ?? '—' }}
-                                                <input type="hidden" name="stocks[{{ $i }}][color_id]" value="{{ $product->color_id }}">
-                                            </td>
-                                            <td>
-                                                {{ $product->size?->name ?? '—' }}
-                                                <input type="hidden" name="stocks[{{ $i }}][size_id]" value="{{ $product->size_id }}">
-                                            </td>
-                                            <td>
-                                                <input type="number" step="0.01" min="0" name="stocks[{{ $i }}][purchase_price]" class="form-control form-control-sm input-purchase" value="{{ $variation->purchase_price ?? $product->purchase_price }}">
-                                            </td>
-                                            <td>
-                                                <input type="number" step="0.01" min="0" name="stocks[{{ $i }}][sell_price]" class="form-control form-control-sm input-sell" value="{{ $variation->price ?? $product->sale_price }}">
-                                            </td>
-                                            <td>
-                                                <input type="hidden" name="stocks[{{ $i }}][barcode]" value="{{ $variation->barcode ?? '' }}">
-                                                <input type="number" name="stocks[{{ $i }}][quantity]" value="{{ $variation->stock }}" class="form-control form-control-sm variation-stock-input" min="0">
-                                            </td>
-                                            <td class="text-center">
-                                                <button type="button" class="btn-remove-var remove-variation"><i class="fas fa-trash"></i></button>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    @endforelse
+                                    @endforeach
                                     <tr id="emptyVariation" style="display:none;">
                                         <td colspan="6" class="text-center text-muted py-3">No variations added yet.</td>
                                     </tr>
