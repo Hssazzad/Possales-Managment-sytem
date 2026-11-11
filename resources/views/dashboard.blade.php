@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard | Possales')
+@section('title', 'Dashboard | BongoBay')
 
 @section('content_header')
 @php
@@ -9,14 +9,14 @@
     $userName = auth()->user()->name ?? 'Manager';
 @endphp
 <div class="dash-hero">
-    <div>
+    <div class="dash-hero-info">
+        <span class="dash-hero-eyebrow"><i class="fas fa-circle"></i> {{ now()->format('l, d F Y') }}</span>
         <h1 class="dash-greeting">{{ $greeting }}, {{ $userName }}</h1>
-        <p class="dash-sub">Here is what is happening across your store today.</p>
+        <p class="dash-sub">{{ $todaySalesCount }} sale{{ $todaySalesCount == 1 ? '' : 's' }} today &middot; ৳{{ number_format($todayCollection ?? 0, 2) }} collected &middot; {{ $lowStockCount }} low-stock item{{ $lowStockCount == 1 ? '' : 's' }} need attention</p>
     </div>
-    <div class="dash-hero-right">
-        <span class="dash-date"><i class="far fa-calendar-alt"></i> {{ now()->format('l, d F Y') }}</span>
+    <div class="dash-hero-actions">
+        <a href="{{ route('purchases.create') }}" class="dash-btn dash-btn-ghost"><i class="fas fa-truck"></i> New Purchase</a>
         <a href="{{ route('pos.index') }}" class="dash-btn dash-btn-primary"><i class="fas fa-plus"></i> New Sale</a>
-        <a href="{{ route('sales.index') }}" class="dash-btn">Sales List</a>
     </div>
 </div>
 @stop
@@ -34,82 +34,180 @@
 
 {{-- KPI Cards --}}
 <div class="row mt-1">
-
     <div class="col-xl-3 col-sm-6 col-12 mb-3">
-        <div class="card dash-kpi h-100">
+        <div class="card dash-kpi h-100" style="--accent:#2563eb;">
             <div class="card-body">
                 <div class="dash-kpi-top">
                     <span class="dash-kpi-label">Today's Sales</span>
                     <span class="dash-icon dash-icon-blue"><i class="fas fa-shopping-bag"></i></span>
                 </div>
                 <h3 class="dash-kpi-value">৳{{ number_format($todaySales, 2) }}</h3>
-                <span class="dash-pill {{ $todaySalesChange >= 0 ? 'dash-pill-up' : 'dash-pill-down' }}">
-                    <i class="fas fa-arrow-{{ $todaySalesChange >= 0 ? 'up' : 'down' }}"></i>
-                    {{ number_format(abs($todaySalesChange), 1) }}%
-                </span>
-                <span class="dash-kpi-hint">vs yesterday</span>
+                <div class="dash-kpi-trend">
+                    <span class="dash-pill {{ $todaySalesChange >= 0 ? 'dash-pill-up' : 'dash-pill-down' }}">
+                        <i class="fas fa-arrow-{{ $todaySalesChange >= 0 ? 'up' : 'down' }}"></i>
+                        {{ number_format(abs($todaySalesChange), 1) }}%
+                    </span>
+                    <span class="dash-kpi-hint">vs yesterday &middot; {{ $todaySalesCount }} orders</span>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="col-xl-3 col-sm-6 col-12 mb-3">
-        <div class="card dash-kpi h-100">
+        <div class="card dash-kpi h-100" style="--accent:#16a34a;">
             <div class="card-body">
                 <div class="dash-kpi-top">
                     <span class="dash-kpi-label">Total Sales</span>
                     <span class="dash-icon dash-icon-green"><i class="fas fa-chart-line"></i></span>
                 </div>
                 <h3 class="dash-kpi-value">৳{{ number_format($totalSales, 2) }}</h3>
-                <span class="dash-pill {{ $monthlySalesChange >= 0 ? 'dash-pill-up' : 'dash-pill-down' }}">
-                    <i class="fas fa-arrow-{{ $monthlySalesChange >= 0 ? 'up' : 'down' }}"></i>
-                    {{ number_format(abs($monthlySalesChange), 1) }}%
-                </span>
-                <span class="dash-kpi-hint">vs last month</span>
+                <div class="dash-kpi-trend">
+                    <span class="dash-pill {{ $monthlySalesChange >= 0 ? 'dash-pill-up' : 'dash-pill-down' }}">
+                        <i class="fas fa-arrow-{{ $monthlySalesChange >= 0 ? 'up' : 'down' }}"></i>
+                        {{ number_format(abs($monthlySalesChange), 1) }}%
+                    </span>
+                    <span class="dash-kpi-hint">vs last month</span>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="col-xl-3 col-sm-6 col-12 mb-3">
-        <div class="card dash-kpi h-100">
+        <div class="card dash-kpi h-100" style="--accent:#7c3aed;">
             <div class="card-body">
                 <div class="dash-kpi-top">
                     <span class="dash-kpi-label">Net Profit</span>
                     <span class="dash-icon dash-icon-violet"><i class="fas fa-wallet"></i></span>
                 </div>
                 <h3 class="dash-kpi-value">৳{{ number_format($totalIncome, 2) }}</h3>
-                <span class="dash-pill dash-pill-neutral"><i class="fas fa-equals"></i> Revenue minus cost</span>
-                <span class="dash-kpi-hint">after returns</span>
+                <div class="dash-kpi-trend">
+                    <span class="dash-pill dash-pill-neutral"><i class="fas fa-equals"></i> Sales &minus; cost</span>
+                    <span class="dash-kpi-hint">after returns</span>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="col-xl-3 col-sm-6 col-12 mb-3">
-        <div class="card dash-kpi h-100">
+        <div class="card dash-kpi h-100" style="--accent:#e11d48;">
             <div class="card-body">
                 <div class="dash-kpi-top">
                     <span class="dash-kpi-label">Total Expenses</span>
                     <span class="dash-icon dash-icon-rose"><i class="fas fa-file-invoice-dollar"></i></span>
                 </div>
                 <h3 class="dash-kpi-value">৳{{ number_format($totalExpense, 2) }}</h3>
-                <span class="dash-pill {{ $monthlyExpenseChange >= 0 ? 'dash-pill-down' : 'dash-pill-up' }}">
-                    <i class="fas fa-arrow-{{ $monthlyExpenseChange >= 0 ? 'up' : 'down' }}"></i>
-                    {{ number_format(abs($monthlyExpenseChange), 1) }}%
-                </span>
-                <span class="dash-kpi-hint">vs last month</span>
+                <div class="dash-kpi-trend">
+                    <span class="dash-pill {{ $monthlyExpenseChange >= 0 ? 'dash-pill-down' : 'dash-pill-up' }}">
+                        <i class="fas fa-arrow-{{ $monthlyExpenseChange >= 0 ? 'up' : 'down' }}"></i>
+                        {{ number_format(abs($monthlyExpenseChange), 1) }}%
+                    </span>
+                    <span class="dash-kpi-hint">vs last month</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- Quick actions + Finance snapshot --}}
+<div class="row">
+    <div class="col-lg-8 mb-3">
+        <div class="card dash-panel h-100">
+            <div class="card-header dash-panel-head">
+                <h6><i class="fas fa-bolt"></i> Quick Actions</h6>
+                <span class="text-muted small">Jump straight to the task</span>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6 col-md-3 mb-2">
+                        <a href="{{ route('pos.index') }}" class="dash-action">
+                            <span class="dash-icon dash-icon-blue"><i class="fas fa-shopping-cart"></i></span>
+                            <strong>New Sale</strong>
+                            <small>Open POS terminal</small>
+                            <i class="fas fa-arrow-right dash-action-arrow"></i>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-3 mb-2">
+                        <a href="{{ route('purchases.create') }}" class="dash-action">
+                            <span class="dash-icon dash-icon-amber"><i class="fas fa-truck"></i></span>
+                            <strong>New Purchase</strong>
+                            <small>Add stock from supplier</small>
+                            <i class="fas fa-arrow-right dash-action-arrow"></i>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-3 mb-2">
+                        <a href="{{ route('products.create') }}" class="dash-action">
+                            <span class="dash-icon dash-icon-green"><i class="fas fa-box"></i></span>
+                            <strong>Add Product</strong>
+                            <small>Register new item</small>
+                            <i class="fas fa-arrow-right dash-action-arrow"></i>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-3 mb-2">
+                        <a href="{{ route('customers.create') }}" class="dash-action">
+                            <span class="dash-icon dash-icon-violet"><i class="fas fa-user-plus"></i></span>
+                            <strong>Add Customer</strong>
+                            <small>Create customer profile</small>
+                            <i class="fas fa-arrow-right dash-action-arrow"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="dash-glance">
+                    <div class="dash-glance-item">
+                        <span class="dash-icon dash-icon-blue"><i class="fas fa-box"></i></span>
+                        <div><strong>{{ number_format($totalProducts) }}</strong><span>Products</span></div>
+                    </div>
+                    <div class="dash-glance-item">
+                        <span class="dash-icon dash-icon-green"><i class="fas fa-users"></i></span>
+                        <div><strong>{{ number_format($totalCustomers) }}</strong><span>Customers</span></div>
+                    </div>
+                    <div class="dash-glance-item">
+                        <span class="dash-icon dash-icon-amber"><i class="fas fa-truck"></i></span>
+                        <div><strong>{{ number_format($totalSuppliers) }}</strong><span>Suppliers</span></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+    <div class="col-lg-4 mb-3">
+        <div class="card dash-panel h-100">
+            <div class="card-header dash-panel-head">
+                <h6><i class="fas fa-coins"></i> Finance Snapshot</h6>
+                <span class="dash-badge-year">{{ now()->year }}</span>
+            </div>
+            <div class="card-body">
+                <a href="{{ route('dues.index') }}" class="dash-finance-row">
+                    <span class="dash-icon dash-icon-green"><i class="fas fa-hand-holding-usd"></i></span>
+                    <div class="dash-finance-text"><strong>Receivable</strong><small>Customer dues to collect</small></div>
+                    <span class="dash-finance-value">৳{{ number_format($customerDue ?? 0, 2) }}</span>
+                </a>
+                <a href="{{ route('supplier.dues') }}" class="dash-finance-row">
+                    <span class="dash-icon dash-icon-rose"><i class="fas fa-money-bill-wave"></i></span>
+                    <div class="dash-finance-text"><strong>Payable</strong><small>Supplier dues to pay</small></div>
+                    <span class="dash-finance-value">৳{{ number_format($supplierDue ?? 0, 2) }}</span>
+                </a>
+                <a href="{{ route('stock.index') }}" class="dash-finance-row">
+                    <span class="dash-icon dash-icon-blue"><i class="fas fa-warehouse"></i></span>
+                    <div class="dash-finance-text"><strong>Inventory Value</strong><small>Stock at cost price</small></div>
+                    <span class="dash-finance-value">৳{{ number_format($inventoryValue ?? 0, 2) }}</span>
+                </a>
+                <div class="dash-finance-row">
+                    <span class="dash-icon dash-icon-amber"><i class="fas fa-shopping-basket"></i></span>
+                    <div class="dash-finance-text"><strong>Today's Purchase</strong><small>Fresh stock added today</small></div>
+                    <span class="dash-finance-value">৳{{ number_format($todayPurchase ?? 0, 2) }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 {{-- Charts Row --}}
 <div class="row">
-
     <div class="col-lg-8 mb-3">
         <div class="card dash-panel h-100">
             <div class="card-header dash-panel-head">
                 <h6><i class="fas fa-chart-area"></i> Sales Performance</h6>
-                <span class="dash-badge-year">{{ now()->year }}</span>
+                <span class="dash-badge-year">Jan – Dec {{ now()->year }}</span>
             </div>
             <div class="card-body">
                 <div style="height:280px;"><canvas id="profitLossChart"></canvas></div>
@@ -120,8 +218,8 @@
     <div class="col-lg-4 mb-3">
         <div class="card dash-panel h-100">
             <div class="card-header dash-panel-head">
-                <h6><i class="fas fa-chart-pie"></i> Fund Allocation</h6>
-                <span class="dash-badge-year">{{ now()->year }}</span>
+                <h6><i class="fas fa-chart-pie"></i> Money Flow</h6>
+                <span class="dash-badge-year">All time</span>
             </div>
             <div class="card-body">
                 <div class="dash-doughnut-wrap">
@@ -140,34 +238,11 @@
             </div>
         </div>
     </div>
-
 </div>
 
-{{-- Store at a glance --}}
+{{-- Recent Activity + Alerts --}}
 <div class="row">
-    <div class="col-12 mb-3">
-        <div class="card dash-panel">
-            <div class="card-body dash-glance">
-                <div class="dash-glance-item">
-                    <span class="dash-icon dash-icon-blue"><i class="fas fa-box"></i></span>
-                    <div><strong>{{ number_format($totalProducts) }}</strong><span>Products</span></div>
-                </div>
-                <div class="dash-glance-item">
-                    <span class="dash-icon dash-icon-green"><i class="fas fa-users"></i></span>
-                    <div><strong>{{ number_format($totalCustomers) }}</strong><span>Customers</span></div>
-                </div>
-                <div class="dash-glance-item">
-                    <span class="dash-icon dash-icon-amber"><i class="fas fa-truck"></i></span>
-                    <div><strong>{{ number_format($totalSuppliers) }}</strong><span>Suppliers</span></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-{{-- Recent Activity --}}
-<div class="row">
-    <div class="col-12 mb-3">
+    <div class="col-lg-8 mb-3">
         <div class="card dash-panel">
             <div class="card-header dash-tabs-head">
                 <ul class="nav nav-tabs border-0" id="recentTab">
@@ -185,7 +260,6 @@
                 <a href="{{ route('sales.index') }}" class="dash-viewall" id="viewAllSales">View all <i class="fas fa-arrow-right"></i></a>
             </div>
             <div class="card-body tab-content p-0">
-
                 <div class="tab-pane active" id="recentSales">
                     <div class="table-responsive">
                     <table class="table table-hover mb-0 dash-table">
@@ -224,8 +298,9 @@
                             @empty
                             <tr>
                                 <td colspan="7" class="text-center py-5">
-                                    <i class="fas fa-inbox fa-2x d-block mb-2 text-light"></i>
+                                    <i class="fas fa-inbox fa-2x d-block mb-2 text-muted"></i>
                                     <span class="text-muted">No sales yet. Create your first sale from the POS.</span>
+                                    <a href="{{ route('pos.index') }}" class="btn btn-primary btn-sm mt-2">Open POS</a>
                                 </td>
                             </tr>
                             @endforelse
@@ -270,8 +345,9 @@
                             @empty
                             <tr>
                                 <td colspan="7" class="text-center py-5">
-                                    <i class="fas fa-inbox fa-2x d-block mb-2 text-light"></i>
+                                    <i class="fas fa-inbox fa-2x d-block mb-2 text-muted"></i>
                                     <span class="text-muted">No purchases yet.</span>
+                                    <a href="{{ route('purchases.create') }}" class="btn btn-primary btn-sm mt-2">New Purchase</a>
                                 </td>
                             </tr>
                             @endforelse
@@ -279,7 +355,34 @@
                     </table>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
 
+    <div class="col-lg-4 mb-3">
+        <div class="card dash-panel h-100">
+            <div class="card-header dash-panel-head">
+                <h6><i class="fas fa-exclamation-triangle"></i> Low Stock Alerts</h6>
+                <span class="dash-alert-badge">{{ $lowStockCount ?? 0 }} items</span>
+            </div>
+            <div class="card-body">
+                @forelse($lowStockProducts ?? [] as $product)
+                    <div class="dash-alert-row">
+                        <div class="dash-alert-info">
+                            <strong>{{ \Illuminate\Support\Str::limit($product->name, 34) }}</strong>
+                            <small>{{ $product->stock_quantity }} in stock &middot; min {{ $product->min_stock_level ?? 5 }}</small>
+                            <div class="dash-alert-bar"><span style="width:{{ $product->min_stock_level > 0 ? min(100, ($product->stock_quantity / max(1, $product->min_stock_level)) * 100) : 100 }}%"></span></div>
+                        </div>
+                        <a href="{{ route('products.edit', $product->id) }}" class="dash-btn dash-btn-small">Restock</a>
+                    </div>
+                @empty
+                    <div class="dash-alert-empty">
+                        <i class="fas fa-check-circle"></i>
+                        <strong>All stocked up</strong>
+                        <small>No low-stock items right now.</small>
+                    </div>
+                @endforelse
+                <a href="{{ route('stock.low') }}" class="dash-viewall d-block mt-3">View all low stock <i class="fas fa-arrow-right"></i></a>
             </div>
         </div>
     </div>
@@ -306,22 +409,36 @@
     .card { border: 1px solid var(--dash-border) !important; }
 
     /* Hero */
-    .dash-hero { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 4px; }
-    .dash-greeting { margin: 0; font-weight: 800; font-size: 1.5rem; color: var(--dash-text); letter-spacing: -0.3px; }
-    .dash-sub { margin: 2px 0 0; color: var(--dash-muted); font-size: 0.85rem; }
-    .dash-hero-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-    .dash-date { color: var(--dash-muted); font-size: 0.82rem; font-weight: 500; margin-right: 4px; }
-    .dash-date i { margin-right: 5px; }
+    .dash-hero {
+        position: relative; overflow: hidden;
+        display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 55%, #1d4ed8 100%);
+        border-radius: 16px; padding: 22px 26px; margin-bottom: 16px;
+        box-shadow: 0 8px 24px rgba(15,23,42,0.18);
+    }
+    .dash-hero::before, .dash-hero::after {
+        content: ''; position: absolute; border-radius: 50%;
+    }
+    .dash-hero::before { width: 260px; height: 260px; right: -70px; top: -120px; background: radial-gradient(circle, rgba(255,255,255,0.14) 0%, transparent 70%); }
+    .dash-hero::after { width: 180px; height: 180px; right: 120px; bottom: -110px; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%); }
+    .dash-hero-info { position: relative; z-index: 1; }
+    .dash-hero-eyebrow { display: inline-flex; align-items: center; gap: 7px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #93c5fd; }
+    .dash-hero-eyebrow i { font-size: 0.45rem; }
+    .dash-greeting { margin: 6px 0 4px; font-weight: 800; font-size: 1.55rem; color: #fff; letter-spacing: -0.3px; }
+    .dash-sub { margin: 0; color: #cbd5e1; font-size: 0.85rem; }
+    .dash-hero-actions { position: relative; z-index: 1; display: flex; gap: 10px; flex-wrap: wrap; }
     .dash-btn {
         display: inline-flex; align-items: center; gap: 7px;
-        font-size: 0.82rem; font-weight: 600; color: var(--dash-text);
-        background: #fff; border: 1px solid var(--dash-border);
+        font-size: 0.82rem; font-weight: 600;
         padding: 9px 16px; border-radius: 10px; text-decoration: none !important;
-        box-shadow: 0 1px 3px rgba(15,23,42,0.06); transition: all 0.15s;
+        transition: all 0.15s; border: 1px solid transparent;
     }
-    .dash-btn:hover { border-color: var(--dash-blue); color: var(--dash-blue); }
-    .dash-btn-primary { background: var(--dash-blue); border-color: var(--dash-blue); color: #fff !important; }
-    .dash-btn-primary:hover { background: #1d4ed8; color: #fff !important; }
+    .dash-btn-primary { background: #fff; color: #0f172a !important; }
+    .dash-btn-primary:hover { background: #eff6ff; color: #0f172a !important; transform: translateY(-1px); }
+    .dash-btn-ghost { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.25); color: #fff !important; }
+    .dash-btn-ghost:hover { background: rgba(255,255,255,0.2); color: #fff !important; }
+    .dash-btn-small { padding: 5px 10px; font-size: 0.75rem; background: #fff7ed; border-color: #fed7aa; color: #9a3412 !important; }
+    .dash-btn-small:hover { background: #ffedd5; }
 
     /* Flash */
     .dash-flash {
@@ -335,21 +452,23 @@
     @keyframes dashSlideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
     /* KPI */
-    .dash-kpi { border-radius: 16px !important; box-shadow: 0 1px 4px rgba(15,23,42,0.05) !important; transition: transform 0.15s, box-shadow 0.15s; }
+    .dash-kpi { border-radius: 16px !important; box-shadow: 0 1px 4px rgba(15,23,42,0.05) !important; transition: transform 0.15s, box-shadow 0.15s; position: relative; overflow: hidden; }
+    .dash-kpi::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--accent, #2563eb); }
     .dash-kpi:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15,23,42,0.08) !important; }
     .dash-kpi-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
     .dash-kpi-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--dash-muted); }
     .dash-icon {
-        width: 44px; height: 44px; border-radius: 12px;
+        width: 40px; height: 40px; border-radius: 11px;
         display: inline-flex; align-items: center; justify-content: center;
-        font-size: 1.05rem; flex-shrink: 0;
+        font-size: 0.95rem; flex-shrink: 0;
     }
     .dash-icon-blue { background: #dbeafe; color: #1d4ed8; }
     .dash-icon-green { background: #dcfce7; color: #15803d; }
     .dash-icon-violet { background: #ede9fe; color: #6d28d9; }
     .dash-icon-rose { background: #ffe4e6; color: #be123c; }
     .dash-icon-amber { background: #fef3c7; color: #b45309; }
-    .dash-kpi-value { font-size: 1.55rem; font-weight: 800; letter-spacing: -0.5px; color: var(--dash-text); margin: 0 0 10px; }
+    .dash-kpi-value { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; color: var(--dash-text); margin: 0 0 10px; }
+    .dash-kpi-trend { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
     .dash-pill {
         display: inline-flex; align-items: center; gap: 5px;
         font-size: 0.72rem; font-weight: 700;
@@ -359,18 +478,48 @@
     .dash-pill-up { background: #dcfce7; color: #15803d; }
     .dash-pill-down { background: #fee2e2; color: #b91c1c; }
     .dash-pill-neutral { background: #f1f5f9; color: #475569; }
-    .dash-kpi-hint { font-size: 0.75rem; color: var(--dash-muted); margin-left: 6px; }
+    .dash-kpi-hint { font-size: 0.75rem; color: var(--dash-muted); }
 
     /* Panels */
     .dash-panel { border-radius: 16px !important; box-shadow: 0 1px 4px rgba(15,23,42,0.05) !important; overflow: hidden; }
     .dash-panel-head {
-        display: flex; justify-content: space-between; align-items: center;
+        display: flex; justify-content: space-between; align-items: center; gap: 10px;
         background: #fff !important; border-bottom: 1px solid var(--dash-border) !important;
         padding: 14px 20px !important;
     }
     .dash-panel-head h6 { margin: 0; font-weight: 700; font-size: 0.9rem; color: var(--dash-text); }
     .dash-panel-head h6 i { color: var(--dash-blue); margin-right: 8px; }
     .dash-badge-year { font-size: 0.72rem; font-weight: 700; color: var(--dash-muted); background: #f1f5f9; padding: 4px 12px; border-radius: 20px; }
+    .dash-alert-badge { font-size: 0.72rem; font-weight: 700; color: #b45309; background: #fef3c7; padding: 4px 12px; border-radius: 20px; }
+
+    /* Quick actions */
+    .dash-action {
+        position: relative; display: flex; flex-direction: column; gap: 3px;
+        background: #f8fafc; border: 1px solid var(--dash-border); border-radius: 14px;
+        padding: 14px; text-decoration: none !important; color: var(--dash-text) !important;
+        transition: all 0.15s; min-height: 110px; justify-content: center;
+    }
+    .dash-action:hover { background: #fff; border-color: var(--dash-blue); transform: translateY(-2px); box-shadow: 0 6px 14px rgba(15,23,42,0.08); }
+    .dash-action strong { font-size: 0.9rem; font-weight: 700; }
+    .dash-action small { font-size: 0.75rem; color: var(--dash-muted); }
+    .dash-action .dash-icon { margin-bottom: 6px; }
+    .dash-action-arrow { position: absolute; right: 12px; top: 12px; font-size: 0.7rem; color: var(--dash-muted); }
+    .dash-glance { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 12px; border-top: 1px solid #f1f5f9; padding: 14px 6px 0; margin-top: 12px; }
+    .dash-glance-item { display: flex; align-items: center; gap: 10px; }
+    .dash-glance-item strong { display: block; font-size: 1.15rem; font-weight: 800; color: var(--dash-text); line-height: 1.2; }
+    .dash-glance-item span span { font-size: 0.75rem; color: var(--dash-muted); font-weight: 500; }
+
+    /* Finance */
+    .dash-finance-row {
+        display: flex; align-items: center; gap: 12px;
+        padding: 12px 4px; border-bottom: 1px solid #f1f5f9; text-decoration: none !important;
+    }
+    .dash-finance-row:last-child { border-bottom: none; }
+    a.dash-finance-row:hover { background: #f8fafc; border-radius: 10px; }
+    .dash-finance-text { flex: 1; min-width: 0; }
+    .dash-finance-text strong { display: block; font-size: 0.88rem; font-weight: 700; color: var(--dash-text); }
+    .dash-finance-text small { font-size: 0.75rem; color: var(--dash-muted); }
+    .dash-finance-value { font-size: 0.95rem; font-weight: 800; color: var(--dash-text); white-space: nowrap; }
 
     /* Doughnut */
     .dash-doughnut-wrap { position: relative; max-width: 210px; margin: 4px auto 0; }
@@ -389,11 +538,18 @@
     .dash-legend-row:last-child { border-bottom: none; }
     .dash-legend-row .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; }
 
-    /* Glance */
-    .dash-glance { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 12px; padding: 16px 20px !important; }
-    .dash-glance-item { display: flex; align-items: center; gap: 12px; }
-    .dash-glance-item strong { display: block; font-size: 1.2rem; font-weight: 800; color: var(--dash-text); line-height: 1.2; }
-    .dash-glance-item span span { font-size: 0.75rem; color: var(--dash-muted); font-weight: 500; }
+    /* Alerts */
+    .dash-alert-row { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-bottom: 1px solid #f1f5f9; }
+    .dash-alert-row:last-child { border-bottom: none; }
+    .dash-alert-info { flex: 1; min-width: 0; }
+    .dash-alert-info strong { display: block; font-size: 0.85rem; font-weight: 700; color: var(--dash-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .dash-alert-info small { font-size: 0.75rem; color: var(--dash-muted); }
+    .dash-alert-bar { height: 5px; background: #f1f5f9; border-radius: 99px; margin-top: 6px; overflow: hidden; }
+    .dash-alert-bar span { display: block; height: 100%; background: linear-gradient(90deg, #f59e0b, #f97316); border-radius: 99px; }
+    .dash-alert-empty { text-align: center; padding: 26px 10px; }
+    .dash-alert-empty i { font-size: 1.8rem; color: var(--dash-green); display: block; margin-bottom: 8px; }
+    .dash-alert-empty strong { display: block; font-size: 0.9rem; font-weight: 700; color: var(--dash-text); }
+    .dash-alert-empty small { font-size: 0.8rem; color: var(--dash-muted); }
 
     /* Tabs + table */
     .dash-tabs-head { display: flex; justify-content: space-between; align-items: center; background: #fff !important; border-bottom: 1px solid var(--dash-border) !important; padding: 0 20px 0 8px !important; }
@@ -434,8 +590,10 @@
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
     @media (max-width: 576px) {
+        .dash-hero { padding: 18px; }
         .dash-greeting { font-size: 1.2rem; }
         .dash-kpi-value { font-size: 1.3rem; }
+        .dash-hero-actions { width: 100%; }
     }
 </style>
 @stop
@@ -511,7 +669,7 @@
     });
 })();
 
-// Fund Allocation — doughnut with correct values in tooltips
+// Money Flow — doughnut with correct values in tooltips
 new Chart(document.getElementById('overallChart').getContext('2d'), {
     type: 'doughnut',
     data: {

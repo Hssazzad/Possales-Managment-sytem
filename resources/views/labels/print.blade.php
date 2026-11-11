@@ -60,19 +60,6 @@
                         <td style="color:#6c757d;font-size:.8rem">{{ $p->id }}</td>
                         <td style="font-weight:600;color:#1a2b3c">
                             {{ $p->name }}
-                            @if($units->isNotEmpty())
-                                <table class="table table-sm mb-0 mt-1" style="font-size:11px;max-width:320px">
-                                    <thead><tr><th>Product Code</th><th>Status</th></tr></thead>
-                                    <tbody>
-                                        @foreach($units as $unit)
-                                            <tr>
-                                                <td>{{ $unit->unit_code ?? $unit->product_code ?? '-' }}</td>
-                                                <td>{{ ucfirst($unit->status) }}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            @endif
                         </td>
                         <td style="font-weight:600;color:#003d5c">{{ number_format((float)$p->price,2) }}</td>
                         <td><span class="sku-pill">{{ $displayBarcode }}</span></td>
@@ -425,13 +412,7 @@ function esc(s) {
 }
 
 function unitTable(product) {
-    if (!product.units || !product.units.length) return '';
-    var html = '<table class="table table-sm mb-0 mt-1" style="font-size:11px;max-width:320px"><thead><tr><th>Product Code</th><th>Status</th></tr></thead><tbody>';
-    for (var i = 0; i < product.units.length; i++) {
-        var unit = product.units[i];
-        html += '<tr><td>' + esc(unit.unit_code) + '</td><td>' + esc(unit.status) + '</td></tr>';
-    }
-    return html + '</tbody></table>';
+    return '';
 }
 </script>
 @endpush

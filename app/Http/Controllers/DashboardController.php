@@ -70,6 +70,15 @@ class DashboardController extends Controller
         $totalSuppliers = Supplier::count();
         $totalProducts = Product::count();
 
+        $customerDue = (float) Customer::sum('due_amount');
+        $supplierDue = (float) Supplier::sum('due_amount');
+        $inventoryValue = (float) (Product::selectRaw('COALESCE(SUM(stock_quantity * purchase_price), 0) as total_value')->value('total_value') ?? 0);
+        $lowStockCount = Product::lowStock()->count();
+        $lowStockProducts = Product::lowStock()->with('category')->orderBy('stock_quantity', 'asc')->take(5)->get();
+        $todaySalesCount = Sale::today()->count();
+        $todayPurchase = (float) Purchase::whereDate('created_at', today())->sum('total_amount');
+        $todayCollection = (float) Sale::today()->sum('paid_amount');
+
         return view('dashboard', compact(
             'todaySales',
             'todaySalesChange',
@@ -84,7 +93,15 @@ class DashboardController extends Controller
             'monthlyData',
             'totalCustomers',
             'totalSuppliers',
-            'totalProducts'
+            'totalProducts',
+            'customerDue',
+            'supplierDue',
+            'inventoryValue',
+            'lowStockCount',
+            'lowStockProducts',
+            'todaySalesCount',
+            'todayPurchase',
+            'todayCollection'
         ));
     }
 

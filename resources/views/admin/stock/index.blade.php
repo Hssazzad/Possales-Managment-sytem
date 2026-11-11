@@ -191,29 +191,6 @@ table.stk-mini { width: 100%; border-collapse: collapse; background: #fff; }
                                 <span>Variation: <strong>{{ $row['variation_label'] ?? '—' }}</strong></span>
                                 <span>Barcode: <strong class="mono">{{ $row['scan_barcode'] }}</strong></span>
                             </div>
-                            @if($hasUnits)
-                            <div class="stk-units-scroll">
-                                <table class="stk-mini">
-                                    <thead>
-                                        <tr><th scope="col">Unit Code</th><th scope="col">Status</th></tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($row['units'] as $unit)
-                                        @php
-                                            $st = strtolower((string) ($unit['status'] ?? 'available'));
-                                            $stClass = $st === 'available' ? 'stk-st-available' : ($st === 'sold' ? 'stk-st-sold' : ($st === 'returned' ? 'stk-st-returned' : ($st === 'damaged' ? 'stk-st-damaged' : 'stk-st-sold')));
-                                        @endphp
-                                        <tr>
-                                            <td class="mono">{{ $unit['unit_code'] }}</td>
-                                            <td><span class="stk-st {{ $stClass }}">{{ ucfirst($unit['status']) }}</span></td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                            @else
-                            <div class="stk-empty-units">No individual unit records found for this variation.</div>
-                            @endif
                         </div>
                     </td>
                 </tr>

@@ -791,7 +791,7 @@ class PosController extends Controller
             'discount_percentage' => (float) ($product->discount_percentage ?? 0),
             'image_url'           => $product->image
                 ? asset('storage/' . $product->image)
-                : asset('images/no-image.png'),
+                : asset('images/no-product.png'),
             'category'            => $product->category ? ['id' => $product->category->id, 'name' => $product->category->name] : null,
             'brand'               => $product->brand ? ['id' => $product->brand->id, 'name' => $product->brand->name] : null,
             'variations'          => $variations->unique('variation_value')->values()->map(function ($v) use ($product) {
